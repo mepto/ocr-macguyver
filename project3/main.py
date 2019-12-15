@@ -1,7 +1,12 @@
 #! /usr/bin/venv python3
 # coding: utf-8
 
-import Background
+import project3.data as p3
 
 
-current_level = Background()
+def main():
+    current_level = p3.Background(0)
+
+
+if __name__ == '__main__':
+    main()
