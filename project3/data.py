@@ -1,11 +1,9 @@
 #! /usr/bin/venv python3
 # coding: utf-8
 
-import pandas as pd
 import pygame as pg
 
 import json
-from os import path
 from random import randint
 
 
@@ -29,36 +27,45 @@ class Background:
 
     WIDTH = 15
     HEIGHT = 15
+    FILE_LEVELS = "assets/levels.json"
+    VALUES = []
 
     def __init__(self, level):
         self.level = "level" + str(level)
         self.display_background(self.level)
-        self.aiguille = NewItem("https://cdn0.iconfinder.com/data/icons/world-issues/500/needle_and_thread-256.png")
-        self.tube = NewItem("https://cdn3.iconfinder.com/data/icons/medical-205/32/Artboard_10-256.png")
-        self.ether = NewItem("https://cdn3.iconfinder.com/data/icons/glypho-free/64/flask-256.png")
+        self.aiguille = NewItem(self.randomize_position(),
+                                "https://cdn0.iconfinder.com/data/icons/world-issues/500/needle_and_thread-256.png")
+        self.tube = NewItem(self.randomize_position(),
+                            "https://cdn3.iconfinder.com/data/icons/medical-205/32/Artboard_10-256.png")
+        self.ether = NewItem(self.randomize_position(),
+                             "https://cdn3.iconfinder.com/data/icons/glypho-free/64/flask-256.png")
         self.macguyver = Hero((0, 13), "https://user.oc-static.com/upload/2017/04/21/14927753100739_macgyver-32-43.png")
         self.villain = Human((14, 6), "https://user.oc-static.com/upload/2017/04/21/14927753225921_murdoc-32.png")
         self.moves = 0
 
     def display_background(self, values):
-        values_pd = pd.DataFrame(self.read_values_from_json(values))
-        # self.read_values_from_json(values)
-        print(values_pd)
+        # values_pd = pd.DataFrame(self.read_values_from_json(values))
+        values = self.read_values_from_json(values)
+        # print(values_pd)
+        print(values)
 
     def read_values_from_json(self, level_nb):
-        values = []
-        file_levels = "assets/levels.json"
+
         # check if file exists
-        # TODO try catch
-        if path.exists(file_levels):
-            # open a json file with my objects
-            with open(file_levels) as level:
-                # load all the data contained in this file. data = entries
-                data = json.load(level)
-                values.append(data[level_nb])
+        try:
+            open(self.FILE_LEVELS)
+        except (OSError, IOError) as e:
+            # print("error no.: " + str(e.errno))
+            self.VALUES = "Cannot create background: no file found to create levels."
         else:
-            values = "Cannot create background: no file found to create levels."
-        return values
+            # open a json file with my objects
+            with open(self.FILE_LEVELS) as level:
+                # load all the data contained in this file. data = entries
+                # data = json.load(level)
+                # self.VALUES.append(data[level_nb])
+                self.VALUES.append(json.load(level)[level_nb])
+
+        return self.VALUES
 
     def randomize_position(self):
         column = randint(1, 15)
