@@ -1,5 +1,4 @@
 {
-  "level0": "Ready Player 1? Help MacGuyver reach the exit alive! (Use keyboard arrows to move) Press any key to start.",
   "level1": [
     ["w","w","w","w","w","w","w","w","w","w","w","w","w","w","w"],
     ["w","f","f","f","f","f","f","f","f","f","w","f","f","f","w"],
@@ -16,6 +15,7 @@
     ["e","f","w","f","f","f","w","f","f","f","w","f","w","f","w"],
     ["w","f","f","f","w","f","f","f","w","f","f","f","w","f","w"],
     ["w","w","w","w","w","w","w","w","w","w","w","w","w","w","w"]
-  ]
+  ],
+  "level2": ["hello hello"]
 }
 
