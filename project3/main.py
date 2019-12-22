@@ -15,7 +15,12 @@ def main():
             print("ok, no play for you then")
             exit()
 
-    p3.Maze(current_level)
+    player_board = p3.Maze(current_level)
+    hero = player_board.macgyver
+
+    while hero.position != player_board.SAFE_EXIT:
+        user_move = input("So, Mac, where would you like to go? (l, r, u, d)")
+        hero.goes(user_move)
 
     # while p3.Maze.macgyver.is_alive_and_kicking:
     #     direction = input("Where would you like to go? (u, d, l, r")
