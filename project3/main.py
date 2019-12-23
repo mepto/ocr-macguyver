@@ -18,9 +18,16 @@ def main():
     player_board = p3.Maze(current_level)
     hero = player_board.macgyver
 
-    while hero.position != player_board.SAFE_EXIT:
+    while hero.position != player_board.SAFE_EXIT[0]:
         user_move = input("So, Mac, where would you like to go? (l, r, u, d)")
-        hero.goes(user_move)
+        if player_board.is_colliding(hero.goes(user_move)):
+            print(hero.goes(user_move))
+            print("Sorry, you can't go there.")
+        else:
+            hero.position = hero.goes(user_move)
+            print("Your position is now ", hero.position)
+    else:
+        print("Congrats! You're out!")
 
     # while p3.Maze.macgyver.is_alive_and_kicking:
     #     direction = input("Where would you like to go? (u, d, l, r")

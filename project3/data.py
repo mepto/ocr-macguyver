@@ -46,8 +46,8 @@ class Maze:
                           "https://cdn3.iconfinder.com/data/icons/glypho-free/64/flask-256.png")
 
     def display_maze(self):  # , level_nb):
-        print("MacGyver is currently located in column ", self.HUMANS[0][0],
-              "and row", self.HUMANS[0][1])
+        print("MacGyver is currently located in row ", self.HUMANS[0][0],
+              "and col", self.HUMANS[0][1])
         for line in self.BOARD:
             print(line)
 
@@ -86,32 +86,40 @@ class Maze:
 
     def randomize_position(self):
         """ Sets a random position for Items MacGyver needs to find """
-        column = -1
         row = -1
+        column = -1
         while self.BOARD[column][row] != "f" \
-                and (column != self.macgyver.position[0]
-                     or row != self.macgyver.position[1]) \
-                and (column != self.guardian.position[0]
-                     or row != self.guardian.position[1]):
-            column = randint(0, 14)
+                and (row != self.macgyver.position[0]
+                     or column != self.macgyver.position[1]) \
+                and (row != self.guardian.position[0]
+                     or column != self.guardian.position[1]):
             row = randint(0, 14)
+            column = randint(0, 14)
         else:
-            self.ITEMS.append([column, row])
-            return [column, row]
+            self.ITEMS.append([row, column])
+            return [row, column]
 
-    def is_colliding(self, instance, position):
+    def is_colliding(self, planned_direction):
         """ Verifies if position of objects are relevant relative
         to each other and Maze elements """
-        col = position[0] - 1
-        row = position[1] - 1
-        print(instance)
-        zone_type = self.BOARD[col][row]
-        return False
+        # print(planned_direction)
+        row = planned_direction[0]
+        col = planned_direction[1]
+        zone_type = self.BOARD[row][col]
+        # print(zone_type)
+        while row != -1 and col != -1:
+            if zone_type == "f":
+                return False
+            else:  # zone_type == "w":
+                return True
+        else:
+            print("Try again")
+            return True
 
 
 class Human:
 
-    def __init__(self, position=(-1, -1),
+    def __init__(self, position=[-1, -1],
                  image="https://avatars.dicebear.com/v2/male/joe.svg"):
         self.is_alive_and_kicking = True
         self.victory_phrase = "Yay"
@@ -134,25 +142,33 @@ class Hero(Human):
             "u": self.up,
             "d": self.down
         }
-        func = switcher.get(direction, lambda: "Ce n'est pas une direction "
-                                               "connue")
+        func = switcher.get(direction, lambda: print("No know direction. "
+                                                     "Try again."))
         return func()
 
-    def left(self):
-        planned_direction = [self.position[0]-1, self.position[1]]
-        print(planned_direction, self.position)
-
-    def right(self):
-        planned_direction = [self.position[0]+1, self.position[1]]
-        print(planned_direction, self.position)
-
     def up(self):
-        planned_direction = [self.position[0], self.position[1]-1]
-        print(planned_direction, self.position)
+        planned_direction = [self.position[0]-1, self.position[1]]
+        print("You plan to go ", planned_direction, Maze.BOARD[planned_direction[
+            0]][planned_direction[1]])
+        return planned_direction
 
     def down(self):
+        planned_direction = [self.position[0]+1, self.position[1]]
+        print("You plan to go ", planned_direction, Maze.BOARD[planned_direction[
+            0]][planned_direction[1]])
+        return planned_direction
+
+    def left(self):
+        planned_direction = [self.position[0], self.position[1]-1]
+        print("You plan to go ", planned_direction, Maze.BOARD[planned_direction[
+            0]][planned_direction[1]])
+        return planned_direction
+
+    def right(self):
         planned_direction = [self.position[0], self.position[1]+1]
-        print(planned_direction, self.position)
+        print("You plan to go ", planned_direction, Maze.BOARD[planned_direction[
+            0]][planned_direction[1]])
+        return planned_direction
 
 
 class Item:
