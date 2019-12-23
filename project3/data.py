@@ -9,6 +9,7 @@ is responsible for interactions between them.
 """
 
 # Standard lib imports
+import os
 import sys
 import json
 from random import randint
@@ -27,12 +28,12 @@ class Maze:
     BOARD = []
     ITEMS = []
     HUMANS = []
+    SAFE_EXIT = []
 
     def __init__(self, level):
         self.level = "level" + str(level)
         self.read_values_from_json(self.level)
-        self.display_maze()  # self.level)
-
+        self.display_maze()
         self.macgyver = Hero(self.HUMANS[0],
                               "https://user.oc-static.com/upload/2017/04/21/14927753100739_macgyver-32-43.png")
         self.guardian = Human(self.HUMANS[1],
@@ -45,6 +46,8 @@ class Maze:
                           "https://cdn3.iconfinder.com/data/icons/glypho-free/64/flask-256.png")
 
     def display_maze(self):  # , level_nb):
+        print("MacGyver is currently located in row ", self.HUMANS[0][0],
+              "and col", self.HUMANS[0][1])
         for line in self.BOARD:
             print(line)
 
@@ -65,10 +68,15 @@ class Maze:
             # open a json file with my objects
             with open(self.FILE_LEVELS) as level:
                 # load all the data contained in this file
-                self.BOARD.append(json.load(level)[level_nb]["humans"])
-                # self.HUMANS.append(json.load(level)[level_nb]["humans"])
-                print(self.BOARD)
-                # print(self.HUMANS)
+                data = json.load(level)
+                for elem in data[level_nb]:
+                    for r in data[level_nb][elem]:
+                        if elem == "background":
+                            self.BOARD.append(r)
+                        elif elem == "humans":
+                            self.HUMANS.append(r)
+                        else:
+                            self.SAFE_EXIT.append(r)
 
     # def position(self, thecolumn=randint(0, 14), therow=randint(0, 14)):
     #
@@ -78,32 +86,40 @@ class Maze:
 
     def randomize_position(self):
         """ Sets a random position for Items MacGyver needs to find """
-        column = -1
         row = -1
+        column = -1
         while self.BOARD[column][row] != "f" \
-                and (column != self.macgyver.position[0]
-                     or row != self.macgyver.position[1]) \
-                and (column != self.guardian.position[0]
-                     or row != self.guardian.position[1]):
-            column = randint(0, 14)
+                and (row != self.macgyver.position[0]
+                     or column != self.macgyver.position[1]) \
+                and (row != self.guardian.position[0]
+                     or column != self.guardian.position[1]):
             row = randint(0, 14)
+            column = randint(0, 14)
         else:
-            self.ITEMS.append(column, row)
-            return column, row
+            self.ITEMS.append([row, column])
+            return [row, column]
 
-    def is_colliding(self, instance, position):
+    def is_colliding(self, planned_direction):
         """ Verifies if position of objects are relevant relative
         to each other and Maze elements """
-        col = position[0] - 1
-        row = position[1] - 1
-        print(instance)
-        zone_type = self.BOARD[col][row]
-        return False
+        # print(planned_direction)
+        row = planned_direction[0]
+        col = planned_direction[1]
+        zone_type = self.BOARD[row][col]
+        # print(zone_type)
+        while row != -1 and col != -1:
+            if zone_type == "f":
+                return False
+            else:  # zone_type == "w":
+                return True
+        else:
+            print("Try again")
+            return True
 
 
 class Human:
 
-    def __init__(self, position=(-1, -1),
+    def __init__(self, position=[-1, -1],
                  image="https://avatars.dicebear.com/v2/male/joe.svg"):
         self.is_alive_and_kicking = True
         self.victory_phrase = "Yay"
@@ -119,13 +135,48 @@ class Hero(Human):
         self.items = 0
         self.moves = 0
 
+    def goes(self, direction):
+        switcher = {
+            "l": self.left,
+            "r": self.right,
+            "u": self.up,
+            "d": self.down
+        }
+        func = switcher.get(direction, lambda: print("No know direction. "
+                                                     "Try again."))
+        return func()
+
+    def up(self):
+        planned_direction = [self.position[0]-1, self.position[1]]
+        print("You plan to go ", planned_direction, Maze.BOARD[planned_direction[
+            0]][planned_direction[1]])
+        return planned_direction
+
+    def down(self):
+        planned_direction = [self.position[0]+1, self.position[1]]
+        print("You plan to go ", planned_direction, Maze.BOARD[planned_direction[
+            0]][planned_direction[1]])
+        return planned_direction
+
+    def left(self):
+        planned_direction = [self.position[0], self.position[1]-1]
+        print("You plan to go ", planned_direction, Maze.BOARD[planned_direction[
+            0]][planned_direction[1]])
+        return planned_direction
+
+    def right(self):
+        planned_direction = [self.position[0], self.position[1]+1]
+        print("You plan to go ", planned_direction, Maze.BOARD[planned_direction[
+            0]][planned_direction[1]])
+        return planned_direction
+
 
 class Item:
 
     def __init__(self, position, image):
         self.position = position
         self.image = image
-        self.display_item()
+        # self.display_item()
 
     def display_item(self):
         print(self.position)
