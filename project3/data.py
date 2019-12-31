@@ -40,13 +40,16 @@ class Maze:
                              "https://user.oc-static.com/upload/2017/04/21/14927753225921_murdoc-32.png")
         self.needle = Item(self.randomize_position(),
                            "https://cdn0.iconfinder.com/data/icons/world-issues/500/needle_and_thread-256.png")
+        self.ITEMS.append(self.needle)
         self.tube = Item(self.randomize_position(),
                          "https://cdn3.iconfinder.com/data/icons/medical-205/32/Artboard_10-256.png")
+        self.ITEMS.append(self.tube)
         self.ether = Item(self.randomize_position(),
                           "https://cdn3.iconfinder.com/data/icons/glypho-free/64/flask-256.png")
+        self.ITEMS.append(self.ether)
 
     def display_maze(self):  # , level_nb):
-        print("MacGyver is currently located in row ", self.HUMANS[0][0],
+        print("MacGyver is currently located in row", self.HUMANS[0][0],
               "and col", self.HUMANS[0][1])
         for line in self.BOARD:
             print(line)
@@ -78,17 +81,11 @@ class Maze:
                         else:
                             self.SAFE_EXIT.append(r)
 
-    # def position(self, thecolumn=randint(0, 14), therow=randint(0, 14)):
-    #
-    #     thecolumn = thecolumn * self.SPRITE_WIDTH
-    #     therow = therow * self.SPRITE_HEIGHT
-    #     return thecolumn, therow
-
     def randomize_position(self):
         """ Sets a random position for Items MacGyver needs to find """
         row = -1
         column = -1
-        while self.BOARD[column][row] != "f" \
+        while self.BOARD[row][column] != "f" \
                 and (row != self.macgyver.position[0]
                      or column != self.macgyver.position[1]) \
                 and (row != self.guardian.position[0]
@@ -96,7 +93,7 @@ class Maze:
             row = randint(0, 14)
             column = randint(0, 14)
         else:
-            self.ITEMS.append([row, column])
+            # self.ITEMS.append([row, column])
             return [row, column]
 
     def is_colliding(self, planned_direction):
@@ -113,7 +110,6 @@ class Maze:
             else:  # zone_type == "w":
                 return True
         else:
-            print("Try again")
             return True
 
 
@@ -142,32 +138,40 @@ class Hero(Human):
             "u": self.up,
             "d": self.down
         }
-        func = switcher.get(direction, lambda: print("No know direction. "
-                                                     "Try again."))
+        func = switcher.get(direction, self.other)
         return func()
 
     def up(self):
         planned_direction = [self.position[0]-1, self.position[1]]
-        print("You plan to go ", planned_direction, Maze.BOARD[planned_direction[
+        print("You plan to go up at", planned_direction, Maze.BOARD[
+            planned_direction[
             0]][planned_direction[1]])
         return planned_direction
 
     def down(self):
         planned_direction = [self.position[0]+1, self.position[1]]
-        print("You plan to go ", planned_direction, Maze.BOARD[planned_direction[
+        print("You plan to go down at", planned_direction, Maze.BOARD[
+            planned_direction[
             0]][planned_direction[1]])
         return planned_direction
 
     def left(self):
         planned_direction = [self.position[0], self.position[1]-1]
-        print("You plan to go ", planned_direction, Maze.BOARD[planned_direction[
+        print("You plan to go left at", planned_direction, Maze.BOARD[
+            planned_direction[
             0]][planned_direction[1]])
         return planned_direction
 
     def right(self):
         planned_direction = [self.position[0], self.position[1]+1]
-        print("You plan to go ", planned_direction, Maze.BOARD[planned_direction[
+        print("You plan to go right at", planned_direction, Maze.BOARD[
+            planned_direction[
             0]][planned_direction[1]])
+        return planned_direction
+
+    def other(self):
+        planned_direction = self.position
+        print("No know direction. Try again.")
         return planned_direction
 
 
@@ -176,7 +180,8 @@ class Item:
     def __init__(self, position, image):
         self.position = position
         self.image = image
-        # self.display_item()
+        self.is_displayed = True
+        self.display_item()
 
     def display_item(self):
         print(self.position)

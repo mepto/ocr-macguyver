@@ -21,17 +21,19 @@ def main():
     while hero.position != player_board.SAFE_EXIT[0]:
         user_move = input("So, Mac, where would you like to go? (l, r, u, d)")
         if player_board.is_colliding(hero.goes(user_move)):
-            print(hero.goes(user_move))
             print("Sorry, you can't go there.")
         else:
             hero.position = hero.goes(user_move)
-            print("Your position is now ", hero.position)
+            for item in p3.Maze.ITEMS:
+                print(item.position)
+                if item.position == hero.position and item.is_displayed:
+                    hero.items += 1
+                    item.is_displayed = False
+                    print("Mac now has", hero.items, "item(s).")
+            print("Your position is now", hero.position)
+
     else:
         print("Congrats! You're out!")
-
-    # while p3.Maze.macgyver.is_alive_and_kicking:
-    #     direction = input("Where would you like to go? (u, d, l, r")
-    #     is_colliding()
 
 
 if __name__ == '__main__':
