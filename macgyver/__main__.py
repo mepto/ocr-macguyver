@@ -3,7 +3,7 @@
 
 
 import os
-import project3.data as p3
+import data as d
 
 os.environ['PYTHONINSPECT'] = 'TRUE'
 
@@ -19,7 +19,7 @@ def main():
             print("ok, no play for you then")
             exit()
 
-    player_board = p3.Maze(current_level)
+    player_board = d.Maze(current_level)
     hero = player_board.macgyver
     villain = player_board.guardian
 
@@ -29,7 +29,7 @@ def main():
             print("Sorry, you can't go there.")
         else:
             hero.position = hero.goes(user_move)
-            for item in p3.Maze.ITEMS:
+            for item in d.Maze.ITEMS:
                 print(item.position)
                 if item.position == hero.position and item.is_displayed:
                     hero.items += 1
