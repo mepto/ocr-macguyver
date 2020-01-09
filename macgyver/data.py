@@ -34,8 +34,11 @@ class Maze:
     def __init__(self, level):
         self.level = "level" + str(level)
         self.read_values_from_json(self.level)
-        self.macgyver = Hero(self.LEVEL_DATA["heros"][0],
-                              "https://user.oc-static.com/upload/2017/04/21/14927753100739_macgyver-32-43.png")
+        self.macgyver = Hero(
+            self.LEVEL_DATA["heros"][0],
+            """https://user.oc-static.com/upload/2017
+            /04/21/14927753100739_macgyver-32-43.png"""
+        )
         self.guardian = Human(self.LEVEL_DATA["villains"][0],
                              "https://user.oc-static.com/upload/2017/04/21/14927753225921_murdoc-32.png")
         self.needle = Item(self.randomize_position(),
@@ -64,10 +67,6 @@ class Maze:
             self.BOARD.append("Cannot create Maze: no file "
                               "found to create levels (error no.: " +
                               str(e.errno) + ").")
-        except Exception:
-            self.BOARD.append("Cannot create Maze, "
-                              "an unexpected error occurred:"
-                              + str(sys.exc_info()[0]))
         else:
             # open a json file with my objects
             with open(self.FILE_LEVELS) as level:
@@ -75,17 +74,6 @@ class Maze:
                 self.LEVEL_DATA = json.load(level)[level_nb]
                 self.BOARD = self.LEVEL_DATA["background"]
                 self.SAFE_EXIT = self.LEVEL_DATA["exit"]
-                # data = json.load(level)
-                # for elem in data[level_nb]:
-                #     for r in data[level_nb][elem]:
-                #         if elem == "background":
-                #             self.BOARD.append(r)
-                #         elif elem == "heros":
-                #             self.HEROS.append(r)
-                #         elif elem == "vilains":
-                #             self.VILAINS.append(r)
-                #         else:
-                #             self.SAFE_EXIT.append(r)
 
     def randomize_position(self):
         """ Sets a random position for Items MacGyver needs to find """
@@ -99,7 +87,6 @@ class Maze:
             row = randint(0, 14)
             column = randint(0, 14)
         else:
-            # self.ITEMS.append([row, column])
             return [row, column]
 
     def is_colliding(self, planned_direction):
@@ -109,11 +96,10 @@ class Maze:
         row = planned_direction[0]
         col = planned_direction[1]
         zone_type = self.BOARD[row][col]
-        # print(zone_type)
         while row != -1 and col != -1:
             if zone_type == "f":
                 return False
-            else:  # zone_type == "w":
+            else:
                 return True
         else:
             return True

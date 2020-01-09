@@ -2,10 +2,7 @@
 # coding: utf-8
 
 
-import os
 import data as d
-
-os.environ['PYTHONINSPECT'] = 'TRUE'
 
 
 def main():
