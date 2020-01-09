@@ -9,12 +9,12 @@ is responsible for interactions between them.
 """
 
 # Standard lib imports
-import sys
+import os
 import json
 from random import randint
 
 # Third-party imports
-import pygame as pg
+import pygame as game
 
 
 class Maze:
@@ -27,19 +27,21 @@ class Maze:
     LEVEL_DATA = []
     BOARD = []
     ITEMS = []
-    # HEROS = []
-    # VILLAINS = []
+    HEROS = []
+    VILLAINS = []
     SAFE_EXIT = []
 
     def __init__(self, level):
         self.level = "level" + str(level)
         self.read_values_from_json(self.level)
         self.macgyver = Hero(
-            self.LEVEL_DATA["heros"][0],
+            self.HEROS["macgyver"].position_row,
+            self.HEROS["macgyver"].position_col,
             """https://user.oc-static.com/upload/2017
             /04/21/14927753100739_macgyver-32-43.png"""
         )
-        self.guardian = Human(self.LEVEL_DATA["villains"][0],
+        self.guardian = Human(self.VILLAINS["guardian"].position_row,
+                              self.VILLAINS["guardian"].position_col,
                              "https://user.oc-static.com/upload/2017/04/21/14927753225921_murdoc-32.png")
         self.needle = Item(self.randomize_position(),
                            "https://cdn0.iconfinder.com/data/icons/world-issues/500/needle_and_thread-256.png")
@@ -53,8 +55,9 @@ class Maze:
         self.display_maze()
 
     def display_maze(self):  # , level_nb):
-        print("MacGyver is currently located in row", self.macgyver.position[0],
-              "and col", self.macgyver.position[1])
+        print("MacGyver is currently located in row",
+              self.macgyver.position_row,
+              "and col", self.macgyver.position_col)
         for line in self.BOARD:
             print(line)
 
@@ -62,64 +65,74 @@ class Maze:
         """ Retrieve Maze data from json file"""
         # check if file exists
         try:
-            open(self.FILE_LEVELS)
+            os.path.exists(self.FILE_LEVELS)
         except (OSError, IOError) as e:
             self.BOARD.append("Cannot create Maze: no file "
                               "found to create levels (error no.: " +
                               str(e.errno) + ").")
         else:
-            # open a json file with my objects
+            # open json file with level elements
             with open(self.FILE_LEVELS) as level:
-                # load all the data contained in this file
-                self.LEVEL_DATA = json.load(level)[level_nb]
-                self.BOARD = self.LEVEL_DATA["background"]
-                self.SAFE_EXIT = self.LEVEL_DATA["exit"]
+                # load the data contained in this file
+                playing_level = json.load(level)[level_nb]
+                self.BOARD = playing_level["background"]
+                self.SAFE_EXIT = playing_level["exit"]
+                self.HEROS = playing_level["heros"]
+                self.VILLAINS = playing_level["villains"]
 
     def randomize_position(self):
         """ Sets a random position for Items MacGyver needs to find """
         row = -1
         column = -1
-        while self.BOARD[row][column] != "f" \
-                and (row != self.macgyver.position[0]
-                     or column != self.macgyver.position[1]) \
-                and (row != self.guardian.position[0]
-                     or column != self.guardian.position[1]):
+        while self.is_colliding(row, column):
             row = randint(0, 14)
             column = randint(0, 14)
+        # while self.BOARD[row][column] != "f" \
+        #         and (row != self.macgyver.position_row
+        #              or column != self.macgyver.position_col) \
+        #         and (row != self.guardian.position_row
+        #              or column != self.guardian.position_col):
+        #     row = randint(0, 14)
+        #     column = randint(0, 14)
         else:
-            return [row, column]
+            return row, column
 
-    def is_colliding(self, planned_direction):
+    def is_colliding(self, planned_row=-1, planned_col=-1):
         """ Verifies if position of objects are relevant relative
         to each other and Maze elements """
         # print(planned_direction)
-        row = planned_direction[0]
-        col = planned_direction[1]
+        row = planned_row
+        col = planned_col
         zone_type = self.BOARD[row][col]
         while row != -1 and col != -1:
-            if zone_type == "f":
-                return False
-            else:
+            if zone_type != "f" \
+                or (row == self.macgyver.position_row
+                     and col == self.macgyver.position_col) \
+                or (row == self.guardian.position_row
+                     and col == self.guardian.position_col):
                 return True
+            else:
+                return False
         else:
             return True
 
 
 class Human:
 
-    def __init__(self, position=[-1, -1],
+    def __init__(self, position_row=-1, position_col=-1,
                  image="https://avatars.dicebear.com/v2/male/joe.svg"):
         self.is_alive_and_kicking = True
         self.victory_phrase = "Yay"
         self.failure_phrase = "Argh..."
-        self.position = position
+        self.position_row = position_row
+        self.position_col = position_col
         self.image = image
 
 
 class Hero(Human):
 
-    def __init__(self, position, image):
-        super().__init__(position, image)
+    def __init__(self, position_row, position_col, image):
+        super().__init__(position_row, position_col, image)
         self.items = 0
         self.moves = 0
 
@@ -134,28 +147,30 @@ class Hero(Human):
         return func()
 
     def up(self):
-        planned_direction = [self.position[0]-1, self.position[1]]
-        print("You plan to go up at", planned_direction, Maze.BOARD[
-            planned_direction[0]][planned_direction[1]])
-        return planned_direction
+        planned_row = self.position_row - 1,
+        print("You plan to go up at row", planned_row,
+              "and column", self.position_col, Maze.BOARD[planned_row]
+              [self.position_col])
+        return planned_row
 
     def down(self):
-        planned_direction = [self.position[0]+1, self.position[1]]
-        print("You plan to go down at", planned_direction, Maze.BOARD[
-            planned_direction[0]][planned_direction[1]])
-        return planned_direction
+        planned_row = self.position_row + 1,
+        print("You plan to go up at row", planned_row,
+              "and column", self.position_col, Maze.BOARD[planned_row]
+              [self.position_col])
+        return planned_row
 
     def left(self):
-        planned_direction = [self.position[0], self.position[1]-1]
-        print(Maze.BOARD)
-        print("You plan to go left at", planned_direction, Maze.BOARD[planned_direction[0]][planned_direction[1]])
-        return planned_direction
+        planned_column = self.position_col - 1
+        print("You plan to go left at row", self.position_row, "and column",
+              planned_column,Maze.BOARD[self.position_row][planned_column])
+        return planned_column
 
     def right(self):
-        planned_direction = [self.position[0], self.position[1]+1]
-        print("You plan to go right at", planned_direction, Maze.BOARD[
-            planned_direction[0]][planned_direction[1]])
-        return planned_direction
+        planned_column = self.position_col + 1
+        print("You plan to go left at row", self.position_row, "and column",
+              planned_column, Maze.BOARD[self.position_row][planned_column])
+        return planned_column
 
     def other(self):
         planned_direction = self.position
@@ -165,8 +180,10 @@ class Hero(Human):
 
 class Item:
 
-    def __init__(self, position, image):
-        self.position = position
+    def __init__(self, position_row=-1, position_col=-1,
+                 image="https://freeiconshop.com/wp-content/uploads/edd/gift-flat.png"):
+        self.position_row = position_row
+        self.position_col = position_col
         self.image = image
         self.is_displayed = True
         self.display_item()

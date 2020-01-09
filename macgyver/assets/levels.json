@@ -17,16 +17,26 @@
       ["w","f","f","f","w","f","f","f","w","f","f","f","w","f","w"],
       ["w","w","w","w","w","w","w","w","w","w","w","w","w","w","w"]
     ],
-    "heros": [
-      [12, 0]
-    ],
-    "villains": [
-      [5, 13]
-    ],
-    "exit": [
-      [5, 14]
-    ]
-   },
+    "heros": {
+      "macyver": {
+        "position_row": 12,
+        "position_col": 0,
+        "avatar": "https://user.oc-static.com/upload/2017/04/21/14927753100739_macgyver-32-43.png"
+      }
+    },
+    "villains": {
+      "guardian": {
+        "position_row": 5,
+        "position_col": 13,
+        "avatar": "https://user.oc-static.com/upload/2017/04/21/14927753225921_murdoc-32.png"
+      }
+    },
+    "exit": {
+      "main_exit": {
+        "position_row": 5,
+        "position_col": 14
+      }
+   }
+  },
   "level2": ["hello hello"]
 }
-

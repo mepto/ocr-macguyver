@@ -2,7 +2,7 @@
 # coding: utf-8
 
 
-import data as d
+import macgyver.data as data
 
 
 def main():
@@ -16,7 +16,7 @@ def main():
             print("ok, no play for you then")
             exit()
 
-    player_board = d.Maze(current_level)
+    player_board = data.Maze(current_level)
     hero = player_board.macgyver
     villain = player_board.guardian
 
@@ -26,7 +26,7 @@ def main():
             print("Sorry, you can't go there.")
         else:
             hero.position = hero.goes(user_move)
-            for item in d.Maze.ITEMS:
+            for item in data.Maze.ITEMS:
                 print(item.position)
                 if item.position == hero.position and item.is_displayed:
                     hero.items += 1
