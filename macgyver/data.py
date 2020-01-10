@@ -24,7 +24,6 @@ class Maze:
     SPRITE_WIDTH = 1
     SPRITE_HEIGHT = 1
     FILE_LEVELS = "assets/levels.json"
-    LEVEL_DATA = []
     BOARD = []
     ITEMS = []
     HEROS = []
@@ -34,15 +33,17 @@ class Maze:
     def __init__(self, level):
         self.level = "level" + str(level)
         self.read_values_from_json(self.level)
-        self.macgyver = Hero(
-            self.HEROS["macgyver"].position_row,
-            self.HEROS["macgyver"].position_col,
+        self.macgyver = Hero(Position(
+            self.HEROS["macgyver"]["position_row"],
+            self.HEROS["macgyver"]["position_col"]),
             """https://user.oc-static.com/upload/2017
             /04/21/14927753100739_macgyver-32-43.png"""
         )
-        self.guardian = Human(self.VILLAINS["guardian"].position_row,
-                              self.VILLAINS["guardian"].position_col,
-                             "https://user.oc-static.com/upload/2017/04/21/14927753225921_murdoc-32.png")
+        self.guardian = Human(Position(self.VILLAINS["guardian"][
+                                           "position_row"],
+                                       self.VILLAINS["guardian"]["position_col"]
+                                       ),
+                              "https://user.oc-static.com/upload/2017/04/21/14927753225921_murdoc-32.png")
         self.needle = Item(self.randomize_position(),
                            "https://cdn0.iconfinder.com/data/icons/world-issues/500/needle_and_thread-256.png")
         self.ITEMS.append(self.needle)
@@ -87,29 +88,21 @@ class Maze:
         while self.is_colliding(row, column):
             row = randint(0, 14)
             column = randint(0, 14)
-        # while self.BOARD[row][column] != "f" \
-        #         and (row != self.macgyver.position_row
-        #              or column != self.macgyver.position_col) \
-        #         and (row != self.guardian.position_row
-        #              or column != self.guardian.position_col):
-        #     row = randint(0, 14)
-        #     column = randint(0, 14)
         else:
-            return row, column
+            return Position(row, column)
 
     def is_colliding(self, planned_row=-1, planned_col=-1):
         """ Verifies if position of objects are relevant relative
         to each other and Maze elements """
-        # print(planned_direction)
         row = planned_row
         col = planned_col
         zone_type = self.BOARD[row][col]
         while row != -1 and col != -1:
             if zone_type != "f" \
                 or (row == self.macgyver.position_row
-                     and col == self.macgyver.position_col) \
+                    and col == self.macgyver.position_col) \
                 or (row == self.guardian.position_row
-                     and col == self.guardian.position_col):
+                    and col == self.guardian.position_col):
                 return True
             else:
                 return False
@@ -119,20 +112,20 @@ class Maze:
 
 class Human:
 
-    def __init__(self, position_row=-1, position_col=-1,
+    def __init__(self, position,
                  image="https://avatars.dicebear.com/v2/male/joe.svg"):
         self.is_alive_and_kicking = True
         self.victory_phrase = "Yay"
         self.failure_phrase = "Argh..."
-        self.position_row = position_row
-        self.position_col = position_col
+        self.position_row = position.row
+        self.position_col = position.column
         self.image = image
 
 
 class Hero(Human):
 
-    def __init__(self, position_row, position_col, image):
-        super().__init__(position_row, position_col, image)
+    def __init__(self, position, image):
+        super().__init__(position, image)
         self.items = 0
         self.moves = 0
 
@@ -163,7 +156,7 @@ class Hero(Human):
     def left(self):
         planned_column = self.position_col - 1
         print("You plan to go left at row", self.position_row, "and column",
-              planned_column,Maze.BOARD[self.position_row][planned_column])
+              planned_column, Maze.BOARD[self.position_row][planned_column])
         return planned_column
 
     def right(self):
@@ -173,20 +166,26 @@ class Hero(Human):
         return planned_column
 
     def other(self):
-        planned_direction = self.position
-        print("No know direction. Try again.")
-        return planned_direction
+        print("No known direction. Try again.")
 
 
 class Item:
 
-    def __init__(self, position_row=-1, position_col=-1,
+    def __init__(self, position,
                  image="https://freeiconshop.com/wp-content/uploads/edd/gift-flat.png"):
-        self.position_row = position_row
-        self.position_col = position_col
+        self.row = position.row
+        self.col = position.column
         self.image = image
         self.is_displayed = True
         self.display_item()
 
     def display_item(self):
-        print(self.position)
+        pass
+        print(self.row, self.col)
+
+
+class Position:
+
+    def __init__(self, row, column):
+        self.row = row
+        self.column = column
