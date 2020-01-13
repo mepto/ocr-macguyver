@@ -7,7 +7,6 @@ import macgyver.data as data
 
 def main():
     current_level = 0
-
     while current_level == 0:
         user_says = input("Ready Player 1 - Please enter 'y' to start playing")
         if user_says == "y" or user_says == "Y":

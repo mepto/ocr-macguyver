@@ -55,7 +55,7 @@ class Maze:
         self.ITEMS.append(self.ether)
         self.display_maze()
 
-    def display_maze(self):  # , level_nb):
+    def display_maze(self):
         print("MacGyver is currently located in row",
               self.macgyver.position_row,
               "and col", self.macgyver.position_col)
@@ -96,8 +96,10 @@ class Maze:
         to each other and Maze elements """
         row = planned_row
         col = planned_col
+        print(row, col)
         zone_type = self.BOARD[row][col]
         while row != -1 and col != -1:
+            print("the self.board result is", self.BOARD[row][col])
             if zone_type != "f" \
                 or (row == self.macgyver.position_row
                     and col == self.macgyver.position_col) \
@@ -140,31 +142,33 @@ class Hero(Human):
         return func()
 
     def up(self):
-        planned_row = self.position_row - 1,
-        print("You plan to go up at row", planned_row,
-              "and column", self.position_col, Maze.BOARD[planned_row]
-              [self.position_col])
-        return planned_row
+        planned_direction = Position(self.position_row - 1, self.position_col),
+        print("You plan to go up at row", planned_direction,
+              "and column", self.position_col, Maze.is_colliding(
+               self.position_row - 1, self.position_col))
+        return planned_direction
 
     def down(self):
-        planned_row = self.position_row + 1,
-        print("You plan to go up at row", planned_row,
-              "and column", self.position_col, Maze.BOARD[planned_row]
-              [self.position_col])
-        return planned_row
+        planned_direction = Position(self.position_row + 1, self.position_col),
+        print("You plan to go up at row", planned_direction,
+              "and column", self.position_col, Maze.is_colliding(
+              self.position_row + 1, self.position_col))
+        return planned_direction
 
     def left(self):
-        planned_column = self.position_col - 1
+        planned_direction = Position(self.position_row, self.position_col - 1)
         print("You plan to go left at row", self.position_row, "and column",
-              planned_column, Maze.BOARD[self.position_row][planned_column])
-        return planned_column
+              planned_direction, Maze.is_colliding(self.position_row,
+                                                   self.position_col - 1))
+        return planned_direction
 
     def right(self):
-        planned_column = self.position_col + 1
+        planned_direction = self.position_col + 1
         print("You plan to go left at row", self.position_row, "and column",
-              planned_column, Maze.BOARD[self.position_row][planned_column])
-        return planned_column
-
+              planned_direction, Maze.is_colliding(self.position_row,
+                                                   self.position_col + 1))
+        return planned_direction
+               
     def other(self):
         print("No known direction. Try again.")
 
@@ -173,15 +177,15 @@ class Item:
 
     def __init__(self, position,
                  image="https://freeiconshop.com/wp-content/uploads/edd/gift-flat.png"):
-        self.row = position.row
-        self.col = position.column
-        self.image = image
+        self.position_row = position.row
+        self.position_col = position.column
+        self.image = image   
         self.is_displayed = True
         self.display_item()
 
     def display_item(self):
         pass
-        print(self.row, self.col)
+        print(self.position_row, self.position_col)
 
 
 class Position:
