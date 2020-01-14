@@ -2,7 +2,8 @@
 # coding: utf-8
 
 
-import macgyver.data as data
+# import macgyver.data as data
+import data
 
 
 def main():
@@ -22,12 +23,17 @@ def main():
     while hero.position_row != player_board.SAFE_EXIT["main_exit"][
           "position_row"] or hero.position_col != player_board.SAFE_EXIT[
           "main_exit"]["position_col"]:
+        player_board.display_maze()
         user_move = input("So, Mac, where would you like to go? (l, r, u, d)")
-        if player_board.is_colliding(hero.goes(user_move)):
+        new_direction = hero.travels(user_move)
+        print(new_direction)
+        if player_board.is_colliding(data.Position(new_direction.row,
+                                     new_direction.col)):
             print("Sorry, you can't go there.")
         else:
-            hero.position = hero.goes(user_move)
-            for item in data.Maze.ITEMS:
+            hero.position_row = new_direction.row
+            hero.position_col = new_direction.col
+            for item in player_board.ITEMS:
                 print(item.position_row, item.position_col)
                 if item.position_col == hero.position_col and \
                         item.position_row == hero.position_row and \
