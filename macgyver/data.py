@@ -44,7 +44,7 @@ class Maze:
                                        self.VILLAINS["guardian"]["position_col"]
                                        ),
                               "https://user.oc-static.com/upload/2017/04/21/14927753225921_murdoc-32.png")
-        self.needle = Item(self.randomize_position(),
+        self.needle = Item(Position(12, 1),
                            "https://cdn0.iconfinder.com/data/icons/world-issues/500/needle_and_thread-256.png")
         self.ITEMS.append(self.needle)
         self.tube = Item(self.randomize_position(),
@@ -61,6 +61,8 @@ class Maze:
         print("MacGyver is currently located in row",
               self.macgyver.position_row,
               "and col", self.macgyver.position_col)
+        for iitem in self.ITEMS:
+            print(iitem.position_row)
 
     def read_values_from_json(self, level_nb):
         """ Retrieve Maze data from json file"""
@@ -82,37 +84,36 @@ class Maze:
                 self.VILLAINS = playing_level["villains"]
 
     def randomize_position(self):
-        """ Sets a random position for Items MacGyver needs to find """
+        """ Set a random position for Items MacGyver needs to find """
         row = -1
         column = -1
-        while self.is_colliding(Position(row, column)):
+        while self.is_colliding(Position(row, column)) != "free":
             row = randint(0, 14)
             column = randint(0, 14)
         else:
             return Position(row, column)
 
     def is_colliding(self, position=None):
-        """ Verifies if position of objects are relevant relative
-        to each other and Maze elements """
-        if position is None:
-            row = -1
-            col = -1
-            print("No position indicated")
+        """ Verify what's in this location and return a string """
+        row = position.row
+        col = position.col
+        if self.BOARD[row][col] == 'w':
+            return "wall"
+        elif row == self.macgyver.position_row \
+                    and col == self.macgyver.position_col:
+            return "hero"
+        elif row == self.guardian.position_row \
+                    and col == self.guardian.position_col:
+            return "villain"
         else:
-            row = position.row
-            col = position.col
-            zone_type = self.BOARD[row][col]
-        while row != -1 and col != -1:
-            if zone_type != "f" \
-                or (row == self.macgyver.position_row
-                    and col == self.macgyver.position_col) \
-                or (row == self.guardian.position_row
-                    and col == self.guardian.position_col):
-                return True
+            for item in self.ITEMS:
+                if item.position_col == col and item.position_row == row \
+                                            and item.is_displayed:
+                    return "item"
+            if self.BOARD[row][col] == 'f':
+                return "free"
             else:
-                return False
-        else:
-            return True
+                return "invalid"
 
 
 class Human:
@@ -151,7 +152,7 @@ class Hero(Human):
         return planned_direction
 
     def down(self):
-        print("You plan to go up at row", self.position_row + 1,
+        print("You plan to go down at row", self.position_row + 1,
               "and column", self.position_col)
         planned_direction = Position(self.position_row + 1, self.position_col)
         return planned_direction

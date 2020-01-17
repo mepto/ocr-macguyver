@@ -26,8 +26,8 @@
     },
     "villains": {
       "guardian": {
-        "position_row": 5,
-        "position_col": 13,
+        "position_row": 13,
+        "position_col": 1,
         "avatar": "https://user.oc-static.com/upload/2017/04/21/14927753225921_murdoc-32.png"
       }
     },
