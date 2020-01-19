@@ -3,7 +3,7 @@
 
 
 # import macgyver.data as data
-import data
+from macgyver import data as data
 
 
 def main():
@@ -49,6 +49,14 @@ def main():
             print("Congrats! You're out!")
         else:
             print("Ooops. You died.")
+            user_says = input(
+                "Would you like to try again? (y/n)")
+            if user_says == 'y' or user_says == 'Y':
+                main()
+            else:
+                print("ok, no play for you then")
+                exit()
+
 
 
 if __name__ == '__main__':

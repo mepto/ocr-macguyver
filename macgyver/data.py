@@ -23,7 +23,7 @@ class Maze:
     HEIGHT = 15
     SPRITE_WIDTH = 1
     SPRITE_HEIGHT = 1
-    FILE_LEVELS = "assets/levels.json"
+    FILE_LEVELS = "macgyver/assets/levels.json"
     BOARD = []
     ITEMS = []
     HEROS = []
@@ -44,7 +44,7 @@ class Maze:
                                        self.VILLAINS["guardian"]["position_col"]
                                        ),
                               "https://user.oc-static.com/upload/2017/04/21/14927753225921_murdoc-32.png")
-        self.needle = Item(Position(12, 1),
+        self.needle = Item(self.randomize_position(),
                            "https://cdn0.iconfinder.com/data/icons/world-issues/500/needle_and_thread-256.png")
         self.ITEMS.append(self.needle)
         self.tube = Item(self.randomize_position(),
