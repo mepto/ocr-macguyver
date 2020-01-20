@@ -18,6 +18,7 @@ def main():
 
     player_board = data.Maze(current_level)
     hero = player_board.macgyver
+    villain = player_board.guardian
 
     while (hero.position_row != player_board.SAFE_EXIT['main_exit'][
           'position_row'] or hero.position_col != player_board.SAFE_EXIT[
@@ -34,21 +35,35 @@ def main():
             elif collision_type == 'villain':
                 hero.position_row = new_direction.row
                 hero.position_col = new_direction.col
-                hero.is_alive_and_kicking = False
-            elif collision_type == 'item':
+                if hero.items < 3:
+                    hero.is_alive_and_kicking = False
+                else:
+                    villain.is_alive_and_kicking = False
+                    print("This guy felt like a nap.")
+                    hero.moves += 1
+            else:
                 hero.position_row = new_direction.row
                 hero.position_col = new_direction.col
-                hero.items += 1
-                # player_board.ITEMS[hero.position_row][
-                # hero.position_col].is_displayed = False
-                print("You now have", hero.items, "item(s).")
+                hero.moves += 1
+                if collision_type == 'item':
+                    hero.items += 1
+                    print("You now have", hero.items, "item(s).")
+                    for item in player_board.ITEMS:
+                        if item.position_row == hero.position_row and \
+                                item.position_col == hero.position_col:
+                            item.is_displayed = False
+                    if hero.items == 3:
+                        print("Mac, hurry, time is running out! Use the items"
+                              " you collected to get rid of the guard!")
                 print("Your position is now", hero.position_row,
                       hero.position_col)
     else:
         if hero.is_alive_and_kicking:
-            print("Congrats! You're out!")
+            print("Congrats! You were out in", hero.moves, "moves :)")
+            player_board.reset_lists()
         else:
             print("Ooops. You died.")
+            player_board.reset_lists()
             user_says = input(
                 "Would you like to try again? (y/n)")
             if user_says == 'y' or user_says == 'Y':
@@ -56,7 +71,6 @@ def main():
             else:
                 print("ok, no play for you then")
                 exit()
-
 
 
 if __name__ == '__main__':

@@ -1,9 +1,9 @@
 #! /usr/bin/python
 # coding: utf-8
 
-from macgyver import ohdear as pff
+from macgyver import __main__ as program
 
 
-pff.main()
+program.main()
 
 
