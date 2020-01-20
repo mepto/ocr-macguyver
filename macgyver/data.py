@@ -39,14 +39,13 @@ class Maze:
                                        self.VILLAINS["guardian"]["position_col"]
                                        ),
                               "https://user.oc-static.com/upload/2017/04/21/14927753225921_murdoc-32.png")
-        self.needle = Item(Position(12, 1),
+        self.needle = Item(self.randomize_position(),
                            "https://cdn0.iconfinder.com/data/icons/world-issues/500/needle_and_thread-256.png")
-        # self.randomize_position(),
         self.ITEMS.append(self.needle)
-        self.tube = Item(Position(13, 1),
+        self.tube = Item(self.randomize_position(),
                          "https://cdn3.iconfinder.com/data/icons/medical-205/32/Artboard_10-256.png")
         self.ITEMS.append(self.tube)
-        self.ether = Item(Position(13, 2),
+        self.ether = Item(self.randomize_position(),
                           "https://cdn3.iconfinder.com/data/icons/glypho-free/64/flask-256.png")
         self.ITEMS.append(self.ether)
         self.display_maze()
