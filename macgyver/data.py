@@ -9,7 +9,7 @@ is responsible for interactions between them.
 """
 
 import json
-import os.path
+import os
 from random import randint
 
 
@@ -18,7 +18,7 @@ class Maze:
     HEIGHT = 15
     SPRITE_WIDTH = 1
     SPRITE_HEIGHT = 1
-    FILE_LEVELS = "assets/levels.json"
+    FILE_LEVELS = "macgyver/assets/levels.json"
     BOARD = []
     ITEMS = []
     HEROS = []
@@ -64,6 +64,7 @@ class Maze:
         # check if file exists
         try:
             os.path.exists(self.FILE_LEVELS)
+            print(os.path.exists(self.FILE_LEVELS))
         except (OSError, IOError) as e:
             self.BOARD.append("Cannot create Maze: no file "
                               "found to create levels (error no.: " +
@@ -87,6 +88,14 @@ class Maze:
             column = randint(0, 14)
         else:
             return Position(row, column)
+
+    def ready_to_play(self):
+        if (self.macgyver.position_row != self.SAFE_EXIT['main_exit'][
+          'position_row'] or self.macgyver.position_col != self.SAFE_EXIT[
+          'main_exit']['position_col']) and self.macgyver.is_alive_and_kicking:
+            return True
+        else:
+            return False
 
     def is_colliding(self, position=None):
         """ Verify what's in this location and return a string """

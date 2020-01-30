@@ -20,9 +20,7 @@ def main():
     hero = player_board.macgyver
     villain = player_board.guardian
 
-    while (hero.position_row != player_board.SAFE_EXIT['main_exit'][
-          'position_row'] or hero.position_col != player_board.SAFE_EXIT[
-          'main_exit']['position_col']) and hero.is_alive_and_kicking:
+    while player_board.ready_to_play():
         player_board.display_maze()
         user_move = input("So, Mac, where would you like to go? (l, r, u, d)")
         new_direction = hero.travels(user_move)
