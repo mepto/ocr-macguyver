@@ -9,7 +9,7 @@ is responsible for interactions between them.
 """
 
 import json
-import os.path
+import os
 from random import randint
 
 
@@ -18,7 +18,7 @@ class Maze:
     HEIGHT = 15
     SPRITE_WIDTH = 1
     SPRITE_HEIGHT = 1
-    FILE_LEVELS = "assets/levels.json"
+    FILE_LEVELS = "macgyver/assets/levels.json"
     BOARD = []
     ITEMS = []
     HEROS = []
@@ -48,14 +48,10 @@ class Maze:
         self.ether = Item(self.randomize_position(),
                           "https://cdn3.iconfinder.com/data/icons/glypho-free/64/flask-256.png")
         self.ITEMS.append(self.ether)
-        self.display_maze()
 
     def display_maze(self):
         for line in self.BOARD:
             print(line)
-        print("MacGyver is currently located in row",
-              self.macgyver.position_row,
-              "and col", self.macgyver.position_col)
         for item in self.ITEMS:
             item.display_item()
 
@@ -64,6 +60,7 @@ class Maze:
         # check if file exists
         try:
             os.path.exists(self.FILE_LEVELS)
+            print(os.path.exists(self.FILE_LEVELS))
         except (OSError, IOError) as e:
             self.BOARD.append("Cannot create Maze: no file "
                               "found to create levels (error no.: " +
@@ -88,6 +85,14 @@ class Maze:
         else:
             return Position(row, column)
 
+    def ready_to_play(self):
+        if (self.macgyver.position_row != self.SAFE_EXIT['main_exit'][
+          'position_row'] or self.macgyver.position_col != self.SAFE_EXIT[
+          'main_exit']['position_col']) and self.macgyver.is_alive_and_kicking:
+            return True
+        else:
+            return False
+
     def is_colliding(self, position=None):
         """ Verify what's in this location and return a string """
         row = position.row
@@ -110,13 +115,41 @@ class Maze:
             else:
                 return "invalid"
 
+    def manage_collision(self, new_position):
+        collision_type = self.is_colliding(new_position)
+
+        if collision_type == 'wall':
+            print("Sorry, you can't go there.")
+        elif collision_type == 'villain':
+            self.macgyver.position_row = new_position.row
+            self.macgyver.position_col = new_position.col
+            if self.macgyver.items < 3:
+                self.macgyver.is_alive_and_kicking = False
+            else:
+                self.guardian.is_alive_and_kicking = False
+                print("This guy felt like a nap.")
+                self.macgyver.moves += 1
+        else:
+            self.macgyver.position_row = new_position.row
+            self.macgyver.position_col = new_position.col
+            self.macgyver.moves += 1
+            if collision_type == 'item':
+                self.macgyver.items += 1
+                print("You now have", self.macgyver.items, "item(s).")
+                for item in self.ITEMS:
+                    if item.position_row == self.macgyver.position_row and \
+                            item.position_col == self.macgyver.position_col:
+                        item.is_displayed = False
+                if self.macgyver.items == 3:
+                    print("Mac, hurry, time is running out! Use the items"
+                          " you collected to get rid of the guard!")
+
     def reset_lists(self):
         self.BOARD.clear()
         self.ITEMS.clear()
         self.HEROS.clear()
         self.VILLAINS.clear()
         self.SAFE_EXIT.clear()
-        # TODO: kill instances using pygame?
 
 
 class Human:
@@ -137,6 +170,10 @@ class Hero(Human):
         super().__init__(position, image)
         self.items = 0
         self.moves = 0
+
+    def print_position(self):
+        print("You are now in position:", self.position_row, "(row),",
+              self.position_col, "(column).")
 
     def travels(self, direction):
         switcher = {
@@ -195,7 +232,7 @@ class Item:
 
     def display_item(self):
         if self.is_displayed:
-            print(self.position_row, self.position_col)
+            print("Item position:", self.position_row, self.position_col)
 
 
 class Position:
