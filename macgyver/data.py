@@ -1,6 +1,6 @@
 #! /usr/bin/python
 # coding: utf-8
-
+# TODO: add docstrings to all classes and defs 
 """
 :synopsis: Classes and methods of people and objects on the playing board are
 contained in this file. The Background contains other classes' objects and
@@ -26,6 +26,7 @@ class Maze:
     SAFE_EXIT = []
 
     def __init__(self, level):
+        """ Creates the level and objects for the board """
         self.level = "level" + str(level)
         self.read_values_from_json(self.level)
         self.macgyver = Hero(Position(
@@ -50,6 +51,7 @@ class Maze:
         self.ITEMS.append(self.ether)
 
     def display_maze(self):
+        """ Show the board to the player """
         for line in self.BOARD:
             print(line)
         for item in self.ITEMS:
@@ -86,6 +88,7 @@ class Maze:
             return Position(row, column)
 
     def ready_to_play(self):
+        """ Check conditions for playing are met """
         if (self.macgyver.position_row != self.SAFE_EXIT['main_exit'][
           'position_row'] or self.macgyver.position_col != self.SAFE_EXIT[
           'main_exit']['position_col']) and self.macgyver.is_alive_and_kicking:
@@ -94,7 +97,7 @@ class Maze:
             return False
 
     def is_colliding(self, position=None):
-        """ Verify what's in this location and return a string """
+        """ Verify what's in this position and return a string """
         row = position.row
         col = position.col
         if self.BOARD[row][col] == 'w':
@@ -116,6 +119,7 @@ class Maze:
                 return "invalid"
 
     def manage_collision(self, new_position):
+        """ Changes parameters depending on collision type """
         collision_type = self.is_colliding(new_position)
 
         if collision_type == 'wall':
@@ -144,7 +148,18 @@ class Maze:
                     print("Mac, hurry, time is running out! Use the items"
                           " you collected to get rid of the guard!")
 
+    def ending(self):
+        """ Show the end depending on hero status """
+        if self.macgyver.is_alive_and_kicking:
+            print(macgyver.victory_phrase)
+            print("Congrats! You were out in", macgyver.moves, "moves :)")
+        else:
+            print(macgyver.failure_phrase)
+            print("Ooops. You died.")
+        self.reset_lists()
+
     def reset_lists(self):
+        """ Empty lists to avoid doubling if player starts again """
         self.BOARD.clear()
         self.ITEMS.clear()
         self.HEROS.clear()
@@ -153,6 +168,7 @@ class Maze:
 
 
 class Human:
+    """ Hero and villain are both humans with positions and status """
 
     def __init__(self, position,
                  image="https://avatars.dicebear.com/v2/male/joe.svg"):
@@ -165,6 +181,7 @@ class Human:
 
 
 class Hero(Human):
+    """ Hero collects items and moves on the board """
 
     def __init__(self, position, image):
         super().__init__(position, image)
@@ -176,6 +193,7 @@ class Hero(Human):
               self.position_col, "(column).")
 
     def travels(self, direction):
+        """ Call a function depending on player direction choice """
         switcher = {
             "l": self.left,
             "r": self.right,
@@ -205,7 +223,7 @@ class Hero(Human):
         return planned_direction
 
     def right(self):
-        print("You plan to go left at row", self.position_row, "and column",
+        print("You plan to go right at row", self.position_row, "and column",
               self.position_col + 1)
         planned_direction = Position(self.position_row, self.position_col + 1)
         return planned_direction
@@ -221,7 +239,7 @@ class Hero(Human):
 
 
 class Item:
-
+    """ Create item with position and display status """
     def __init__(self, position,
                  image="https://freeiconshop.com/wp-content/uploads/edd/gift-flat.png"):
         self.position_row = position.row
@@ -236,7 +254,7 @@ class Item:
 
 
 class Position:
-
+    """ Every object on the board and tentative direction has a Position """
     def __init__(self, row, column):
         self.row = row
         self.col = column
