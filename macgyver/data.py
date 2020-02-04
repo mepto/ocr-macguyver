@@ -62,7 +62,6 @@ class Maze:
         # check if file exists
         try:
             os.path.exists(self.FILE_LEVELS)
-            print(os.path.exists(self.FILE_LEVELS))
         except (OSError, IOError) as e:
             self.BOARD.append("Cannot create Maze: no file "
                               "found to create levels (error no.: " +
@@ -98,6 +97,7 @@ class Maze:
 
     def is_colliding(self, position=None):
         """ Verify what's in this position and return a string """
+
         row = position.row
         col = position.col
         if self.BOARD[row][col] == 'w':
@@ -120,41 +120,42 @@ class Maze:
 
     def manage_collision(self, new_position):
         """ Changes parameters depending on collision type """
-        collision_type = self.is_colliding(new_position)
+        if new_position is not None:
+            collision_type = self.is_colliding(new_position)
 
-        if collision_type == 'wall':
-            print("Sorry, you can't go there.")
-        elif collision_type == 'villain':
-            self.macgyver.position_row = new_position.row
-            self.macgyver.position_col = new_position.col
-            if self.macgyver.items < 3:
-                self.macgyver.is_alive_and_kicking = False
+            if collision_type == 'wall':
+                print("Sorry, you can't go there.")
+            elif collision_type == 'villain':
+                self.macgyver.position_row = new_position.row
+                self.macgyver.position_col = new_position.col
+                if self.macgyver.items < 3:
+                    self.macgyver.is_alive_and_kicking = False
+                else:
+                    self.guardian.is_alive_and_kicking = False
+                    print("This guy felt like a nap.")
+                    self.macgyver.moves += 1
             else:
-                self.guardian.is_alive_and_kicking = False
-                print("This guy felt like a nap.")
+                self.macgyver.position_row = new_position.row
+                self.macgyver.position_col = new_position.col
                 self.macgyver.moves += 1
-        else:
-            self.macgyver.position_row = new_position.row
-            self.macgyver.position_col = new_position.col
-            self.macgyver.moves += 1
-            if collision_type == 'item':
-                self.macgyver.items += 1
-                print("You now have", self.macgyver.items, "item(s).")
-                for item in self.ITEMS:
-                    if item.position_row == self.macgyver.position_row and \
-                            item.position_col == self.macgyver.position_col:
-                        item.is_displayed = False
-                if self.macgyver.items == 3:
-                    print("Mac, hurry, time is running out! Use the items"
-                          " you collected to get rid of the guard!")
+                if collision_type == 'item':
+                    self.macgyver.items += 1
+                    print("You now have", self.macgyver.items, "item(s).")
+                    for item in self.ITEMS:
+                        if item.position_row == self.macgyver.position_row and \
+                                item.position_col == self.macgyver.position_col:
+                            item.is_displayed = False
+                    if self.macgyver.items == 3:
+                        print("Mac, hurry, time is running out! Use the items"
+                              " you collected to get rid of the guard!")
 
     def ending(self):
         """ Show the end depending on hero status """
         if self.macgyver.is_alive_and_kicking:
-            print(macgyver.victory_phrase)
-            print("Congrats! You were out in", macgyver.moves, "moves :)")
+            print(self.macgyver.victory_phrase)
+            print("Congrats! You were out in", self.macgyver.moves, "moves :)")
         else:
-            print(macgyver.failure_phrase)
+            print(self.macgyver.failure_phrase)
             print("Ooops. You died.")
         self.reset_lists()
 
