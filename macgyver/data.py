@@ -1,6 +1,6 @@
 #! /usr/bin/python
 # coding: utf-8
-# TODO: add docstrings to all classes and defs 
+
 """
 :synopsis: Classes and methods of people and objects on the playing board are
 contained in this file. The Background contains other classes' objects and
@@ -11,6 +11,7 @@ is responsible for interactions between them.
 import json
 import os
 from random import randint
+import pygame
 
 
 class Maze:
@@ -151,10 +152,10 @@ class Maze:
     def ending(self):
         """ Show the end depending on hero status """
         if self.macgyver.is_alive_and_kicking:
-            print(macgyver.victory_phrase)
-            print("Congrats! You were out in", macgyver.moves, "moves :)")
+            print(self.macgyver.victory_phrase)
+            print("Congrats! You were out in", self.macgyver.moves, "moves :)")
         else:
-            print(macgyver.failure_phrase)
+            print(self.macgyver.failure_phrase)
             print("Ooops. You died.")
         self.reset_lists()
 
