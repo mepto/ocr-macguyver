@@ -15,10 +15,11 @@ import pygame
 
 
 class Maze:
+    SCREEN_WIDTH = 720
+    SCREEN_HEIGHT = 720
+    SPRITE_SIZE = 48
     WIDTH = 15
     HEIGHT = 15
-    SPRITE_WIDTH = 1
-    SPRITE_HEIGHT = 1
     FILE_LEVELS = "macgyver/assets/levels.json"
     BOARD = []
     ITEMS = []
@@ -28,42 +29,82 @@ class Maze:
 
     def __init__(self, level):
         """ Creates the level and objects for the board """
+        self.window = pygame.display.set_mode((self.SCREEN_WIDTH,
+                                               self.SCREEN_HEIGHT))
+        self.wall = pygame.image.load(
+            'macgyver/assets/wall1.png').convert_alpha()
+        self.floor = pygame.image.load(
+            'macgyver/assets/floor1.png').convert_alpha()
+        self.door = pygame.image.load(
+            'macgyver/assets/doorgit .png').convert_alpha()
+        self.title = pygame.display.set_caption("Save MacGyver!!!")
         self.level = "level" + str(level)
         self.read_values_from_json(self.level)
         self.macgyver = Hero(Position(
             self.HEROS["macgyver"]["position_row"],
-            self.HEROS["macgyver"]["position_col"]),
-            """https://user.oc-static.com/upload/2017
-            /04/21/14927753100739_macgyver-32-43.png"""
-        )
-        self.guardian = Human(Position(self.VILLAINS["guardian"][
-                                           "position_row"],
-                                       self.VILLAINS["guardian"]["position_col"]
-                                       ),
-                              "https://user.oc-static.com/upload/2017/04/21/14927753225921_murdoc-32.png")
-        self.needle = Item(self.randomize_position(),
-                           "https://cdn0.iconfinder.com/data/icons/world-issues/500/needle_and_thread-256.png")
+            self.HEROS["macgyver"]["position_col"]), pygame.image.load(
+            self.HEROS["macgyver"]["avatar"]).convert_alpha())
+        self.guardian = Human(Position(
+            self.VILLAINS["guardian"]["position_row"],
+            self.VILLAINS["guardian"]["position_col"]), pygame.image.load(
+            self.VILLAINS["guardian"]["avatar"]).convert_alpha())
+        self.needle = Item(self.randomize_position(), pygame.image.load(
+            'macgyver/assets/needle.png').convert_alpha())
         self.ITEMS.append(self.needle)
-        self.tube = Item(self.randomize_position(),
-                         "https://cdn3.iconfinder.com/data/icons/medical-205/32/Artboard_10-256.png")
+        self.tube = Item(self.randomize_position(), pygame.image.load(
+            'macgyver/assets/tube.png').convert_alpha())
         self.ITEMS.append(self.tube)
-        self.ether = Item(self.randomize_position(),
-                          "https://cdn3.iconfinder.com/data/icons/glypho-free/64/flask-256.png")
+        self.ether = Item(self.randomize_position(), pygame.image.load(
+            'macgyver/assets/potion.png').convert_alpha())
         self.ITEMS.append(self.ether)
 
     def display_maze(self):
         """ Show the board to the player """
-        for line in self.BOARD:
-            print(line)
+        # blank canvas first
+        self.window.fill(pygame.Color(0, 0, 0))
+
+        # loop over background maze data
+        pos_row = 0
+        for row in self.BOARD:
+            pos_col = 0
+            for location in row:
+                location_rect = self.wall.get_rect(topleft=(pos_col *
+                                                   self.SPRITE_SIZE,
+                                                   pos_row * self.SPRITE_SIZE))
+                if location == "w":
+                    self.window.blit(self.wall, location_rect)
+                elif location == "f":
+                    self.window.blit(self.floor, location_rect)
+                elif location == "d":
+                    self.window.blit(self.door, location_rect)
+                pos_col += 1
+            pos_row += 1
+
+        # loop over collectible items
         for item in self.ITEMS:
-            item.display_item()
+            self.window.blit(item.image, item.image.get_rect(topleft=(
+                item.position_col * self.SPRITE_SIZE, item.position_row *
+                self.SPRITE_SIZE)))
+
+        # display humans
+        self.window.blit(self.macgyver.image,
+                         self.macgyver.image.get_rect(
+            topleft=(self.macgyver.position_col * self.SPRITE_SIZE,
+                     self.macgyver.position_row * self.SPRITE_SIZE)))
+
+        self.window.blit(self.guardian.image,
+                         self.guardian.image.get_rect(
+            topleft=(self.guardian.position_col * self.SPRITE_SIZE,
+                     self.guardian.position_row * self.SPRITE_SIZE)))
+
+
+        pygame.display.flip()
 
     def read_values_from_json(self, level_nb):
         """ Retrieve Maze data from json file"""
         # check if file exists
         try:
             os.path.exists(self.FILE_LEVELS)
-            print(os.path.exists(self.FILE_LEVELS))
         except (OSError, IOError) as e:
             self.BOARD.append("Cannot create Maze: no file "
                               "found to create levels (error no.: " +
@@ -121,33 +162,34 @@ class Maze:
 
     def manage_collision(self, new_position):
         """ Changes parameters depending on collision type """
-        collision_type = self.is_colliding(new_position)
+        if new_position is not None:
+            collision_type = self.is_colliding(new_position)
 
-        if collision_type == 'wall':
-            print("Sorry, you can't go there.")
-        elif collision_type == 'villain':
-            self.macgyver.position_row = new_position.row
-            self.macgyver.position_col = new_position.col
-            if self.macgyver.items < 3:
-                self.macgyver.is_alive_and_kicking = False
+            if collision_type == 'wall':
+                print("Sorry, you can't go there.")
+            elif collision_type == 'villain':
+                self.macgyver.position_row = new_position.row
+                self.macgyver.position_col = new_position.col
+                if self.macgyver.items < 3:
+                    self.macgyver.is_alive_and_kicking = False
+                else:
+                    self.guardian.is_alive_and_kicking = False
+                    print("This guy felt like a nap.")
+                    self.macgyver.moves += 1
             else:
-                self.guardian.is_alive_and_kicking = False
-                print("This guy felt like a nap.")
+                self.macgyver.position_row = new_position.row
+                self.macgyver.position_col = new_position.col
                 self.macgyver.moves += 1
-        else:
-            self.macgyver.position_row = new_position.row
-            self.macgyver.position_col = new_position.col
-            self.macgyver.moves += 1
-            if collision_type == 'item':
-                self.macgyver.items += 1
-                print("You now have", self.macgyver.items, "item(s).")
-                for item in self.ITEMS:
-                    if item.position_row == self.macgyver.position_row and \
-                            item.position_col == self.macgyver.position_col:
-                        item.is_displayed = False
-                if self.macgyver.items == 3:
-                    print("Mac, hurry, time is running out! Use the items"
-                          " you collected to get rid of the guard!")
+                if collision_type == 'item':
+                    self.macgyver.items += 1
+                    print("You now have", self.macgyver.items, "item(s).")
+                    for item in self.ITEMS:
+                        if item.position_row == self.macgyver.position_row and \
+                                item.position_col == self.macgyver.position_col:
+                            item.is_displayed = False
+                    if self.macgyver.items == 3:
+                        print("Mac, hurry, time is running out! Use the items"
+                              " you collected to get rid of the guard!")
 
     def ending(self):
         """ Show the end depending on hero status """
@@ -247,11 +289,16 @@ class Item:
         self.position_col = position.col
         self.image = image
         self.is_displayed = True
-        self.display_item()
+        # self.display_item()
 
-    def display_item(self):
-        if self.is_displayed:
-            print("Item position:", self.position_row, self.position_col)
+    # def display_item(self):
+    #     if self.is_displayed:
+    #         location_rect = self.image.get_rect(topleft=(self.position_row *
+    #                                                      Maze.SPRITE_SIZE,
+    #                                                      self.position_col *
+    #                                                      Maze.SPRITE_SIZE))
+    #         Maze.window.blit(self.image, location_rect)
+    #         print(self.position_row, self.position_col)
 
 
 class Position:

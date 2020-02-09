@@ -5,15 +5,11 @@ from macgyver import data as data
 import pygame
 
 
-SCREEN_WIDTH = 960
-SCREEN_HEIGHT = 960
 FPS = 30
 
 pygame.init()
 pygame.mixer.init()
 
-board = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-pygame.display.set_caption("Save MacGyver!!!")
 clock = pygame.time.Clock()
 
 
@@ -23,21 +19,24 @@ def main():
     playing = True
     while playing:
         # keep loop at same speed
-        clock.tick(FPS)
+
         for event in pygame.event.get():
             # check for window closing
             if event.type == pygame.QUIT:
                 playing = False
-        
-        current_level = 0
-        while current_level == 0:
-            user_says = input("Ready Player 1 - Please enter 'y' to start playing")
-            if user_says.lower() == 'y':
-                current_level += 1
-            else:
-                print("ok, no play for you then")
-                playing = False
-                exit()
+
+
+        clock.tick(FPS)
+        current_level = 1
+        # current_level = 0
+        # while current_level == 0:
+        #     user_says = input("Ready Player 1 - Please enter 'y' to start playing")
+        #     if user_says.lower() == 'y':
+        #         current_level += 1
+        #     else:
+        #         print("ok, no play for you then")
+        #         playing = False
+        #         exit()
 
         player_board = data.Maze(current_level)
         hero = player_board.macgyver
@@ -58,6 +57,7 @@ def main():
                 print("ok, no play for you then. Bye-bye now!")
                 exit()
     pygame.quit()
+    quit()
         
 
 if __name__ == '__main__':

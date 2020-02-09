@@ -6,7 +6,7 @@
       ["w","w","w","w","w","f","w","f","w","w","w","f","w","f","w"],
       ["w","f","f","f","f","f","f","f","f","f","f","f","w","f","w"],
       ["w","f","w","f","f","w","w","w","w","w","w","f","w","f","w"],
-      ["w","f","w","f","f","f","f","f","f","f","w","f","w","f","f"],
+      ["w","f","w","f","f","f","f","f","f","f","w","f","w","f","d"],
       ["w","w","w","w","w","w","w","f","w","f","w","f","f","f","w"],
       ["w","f","f","f","f","f","f","f","w","f","w","f","w","f","w"],
       ["w","f","w","f","w","w","w","f","w","f","w","f","f","f","w"],
@@ -21,14 +21,14 @@
       "macgyver": {
         "position_row": 12,
         "position_col": 0,
-        "avatar": "https://user.oc-static.com/upload/2017/04/21/14927753100739_macgyver-32-43.png"
+        "avatar": "macgyver/assets/hero_right1.png"
       }
     },
     "villains": {
       "guardian": {
         "position_row": 5,
         "position_col": 13,
-        "avatar": "https://user.oc-static.com/upload/2017/04/21/14927753225921_murdoc-32.png"
+        "avatar": "macgyver/assets/villain1.png"
       }
     },
     "exit": {
