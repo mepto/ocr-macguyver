@@ -36,7 +36,7 @@ class Maze:
         self.floor = pygame.image.load(
             'macgyver/assets/floor1.png').convert_alpha()
         self.door = pygame.image.load(
-            'macgyver/assets/doorgit .png').convert_alpha()
+            'macgyver/assets/door.png').convert_alpha()
         self.title = pygame.display.set_caption("Save MacGyver!!!")
         self.level = "level" + str(level)
         self.read_values_from_json(self.level)
@@ -68,37 +68,35 @@ class Maze:
         for row in self.BOARD:
             pos_col = 0
             for location in row:
-                location_rect = self.wall.get_rect(topleft=(pos_col *
-                                                   self.SPRITE_SIZE,
-                                                   pos_row * self.SPRITE_SIZE))
                 if location == "w":
-                    self.window.blit(self.wall, location_rect)
+                    self.window.blit(self.wall, (pos_col * self.SPRITE_SIZE,
+                                                 pos_row * self.SPRITE_SIZE))
                 elif location == "f":
-                    self.window.blit(self.floor, location_rect)
+                    self.window.blit(self.floor, (pos_col * self.SPRITE_SIZE,
+                                                  pos_row * self.SPRITE_SIZE))
                 elif location == "d":
-                    self.window.blit(self.door, location_rect)
+                    self.window.blit(self.door, (pos_col * self.SPRITE_SIZE,
+                                                 pos_row * self.SPRITE_SIZE))
                 pos_col += 1
             pos_row += 1
 
         # loop over collectible items
         for item in self.ITEMS:
-            self.window.blit(item.image, item.image.get_rect(topleft=(
-                item.position_col * self.SPRITE_SIZE, item.position_row *
-                self.SPRITE_SIZE)))
+            self.window.blit(item.image, (item.position_col * self.SPRITE_SIZE,
+                                          item.position_row * self.SPRITE_SIZE))
 
         # display humans
-        self.window.blit(self.macgyver.image,
-                         self.macgyver.image.get_rect(
-            topleft=(self.macgyver.position_col * self.SPRITE_SIZE,
-                     self.macgyver.position_row * self.SPRITE_SIZE)))
+        self.window.blit(self.macgyver.image, (self.macgyver.position_col *
+                                               self.SPRITE_SIZE,
+                                               self.macgyver.position_row *
+                                               self.SPRITE_SIZE))
 
-        self.window.blit(self.guardian.image,
-                         self.guardian.image.get_rect(
-            topleft=(self.guardian.position_col * self.SPRITE_SIZE,
-                     self.guardian.position_row * self.SPRITE_SIZE)))
+        self.window.blit(self.guardian.image, (self.guardian.position_col *
+                                               self.SPRITE_SIZE,
+                                               self.guardian.position_row *
+                                               self.SPRITE_SIZE))
 
-
-        pygame.display.flip()
+        pygame.display.update()
 
     def read_values_from_json(self, level_nb):
         """ Retrieve Maze data from json file"""
@@ -232,17 +230,23 @@ class Hero(Human):
         self.moves = 0
 
     def print_position(self):
-        print("You are now in position:", self.position_row, "(row),",
-              self.position_col, "(column).")
+        print(pygame.key.get_pressed())
+        # print("You are now in position:", self.position_row, "(row),",
+        #       self.position_col, "(column).")
 
     def travels(self, direction):
         """ Call a function depending on player direction choice """
         switcher = {
-            "l": self.left,
-            "r": self.right,
-            "u": self.up,
-            "d": self.down,
-            "exit": self.exit
+            # "l": self.left,
+            # "r": self.right,
+            # "u": self.up,
+            # "d": self.down,
+            # "exit": self.exit
+            pygame.K_LEFT: self.left,
+            pygame.K_RIGHT: self.right,
+            pygame.K_UP: self.up,
+            pygame.K_DOWN: self.down,
+            pygame.K_q: self.exit
         }
         func = switcher.get(direction, self.other)
         return func()
