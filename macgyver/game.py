@@ -6,7 +6,7 @@ import pygame
 import sys
 
 
-FPS = 30
+FPS = 9
 
 pygame.init()
 # pygame.mixer.init()
@@ -19,14 +19,16 @@ def main():
     """ User interaction main loop """
     playing = True
 
-    current_level = 1
-    player_board = data.Maze(current_level)
-    hero = player_board.macgyver
-    player_board.display_maze()
+    current_level = 0
 
-    # while playing:
-    while player_board.ready_to_play():
-        # keep loop at same speed
+    def make_maze(self, new_level):
+
+
+            player_board = data.Maze(new_level)
+
+    make_maze(current_level)
+
+    while playing:
 
         for event in pygame.event.get():
             # check for window closing
@@ -34,63 +36,74 @@ def main():
                 playing = False
                 pygame.quit()
                 quit()
-
-
-                # player_board.display_maze()
-                # hero.print_position()
-                # user_move = input("So, Mac,
-                # where would you like to go? (l, r,
-                # u, d)")
-
-            if event.type == pygame.KEYDOWN:
-                new_position = hero.travels(event.key)
-                player_board.manage_collision(new_position)
+            if current_level < 1:
                 player_board.display_maze()
-                # if event.key == pygame.K_UP:
-                #     print(event.key)
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+                    current_level += 1
+            # while player_board.ready_to_play():
+            if current_level > 0:
+                # player_board = data.Maze(current_level)
+                hero = player_board.macgyver
+                if player_board.ready_to_play() and event.type == pygame.KEYDOWN:
+                    # keep loop at same speed
+                    new_position = hero.travels(event.key)
+                    player_board.manage_collision(new_position)
+                    player_board.display_maze()
 
+                            # player_board.display_maze()
+                            # hero.print_position()
+                            # user_move = input("So, Mac,
+                            # where would you like to go? (l, r,
+                            # u, d)")
 
-        # current_level = 1
-        # current_level = 0
-        # while current_level == 0:
-        #     user_says = input("Ready Player 1 -
-        #     # Please enter 'y' to start playing")
-        #     if user_says.lower() == 'y':
-        #         current_level += 1
-        #     else:
-        #         print("ok, no play for you then")
-        #         playing = False
-        #         exit()
+                        #if event.type == pygame.KEYDOWN:
+                            # new_position = hero.travels(event.key)
+                            # player_board.manage_collision(new_position)
+                            # player_board.display_maze()
+                            # if event.key == pygame.K_UP:
+                            #     print(event.key)
 
-        # player_board = data.Maze(current_level)
-        # hero = player_board.macgyver
-        # player_board.display_maze()
+                    # current_level = 1
+                    # current_level = 0
+                    # while current_level == 0:
+                    #     user_says = input("Ready Player 1 -
+                    #     # Please enter 'y' to start playing")
+                    #     if user_says.lower() == 'y':
+                    #         current_level += 1
+                    #     else:
+                    #         print("ok, no play for you then")
+                    #         playing = False
+                    #         exit()
 
-        # while player_board.ready_to_play():
-            # pass
-            # player_board.display_maze()
-            # hero.print_position()
-            # user_move = input("So, Mac,
-            # where would you like to go? (l, r,
-            # u, d)")
-            # new_position = hero.travels(user_move.lower())
-            # print(event.key)
+                    # player_board = data.Maze(current_level)
+                    # hero = player_board.macgyver
+                    # player_board.display_maze()
 
-                # new_position = hero.travels(event.key)
-                # cplayer_board.manage_collision(new_position)
-                # player_board.display_maze()
-            # hero.print_position()
-        # else:
-        #     playing = False
-        #     player_board.ending()
-        #     user_says = input("Would you like to try again? (y/n)")
-        #     if user_says.lower() == 'y':
-        #         main()
-        #     else:
-        #         print("ok, no play for you then. Bye-bye now!")
-        #         exit()
+                    # while player_board.ready_to_play():
+                        # pass
+                        # player_board.display_maze()
+                        # hero.print_position()
+                        # user_move = input("So, Mac,
+                        # where would you like to go? (l, r,
+                        # u, d)")
+                        # new_position = hero.travels(user_move.lower())
+                        # print(event.key)
 
-        # pygame.display.flip()
+                            # new_position = hero.travels(event.key)
+                            # cplayer_board.manage_collision(new_position)
+                            # player_board.display_maze()
+                        # hero.print_position()
+                    # else:
+                    #     playing = False
+                    #     player_board.ending()
+                    #     user_says = input("Would you like to try again? (y/n)")
+                    #     if user_says.lower() == 'y':
+                    #         main()
+                    #     else:
+                    #         print("ok, no play for you then. Bye-bye now!")
+                    #         exit()
+
+                    # pygame.display.flip()
         clock.tick(FPS)
     pygame.quit()
     quit()

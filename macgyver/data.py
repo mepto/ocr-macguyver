@@ -40,23 +40,32 @@ class Maze:
         self.title = pygame.display.set_caption("Save MacGyver!!!")
         self.level = "level" + str(level)
         self.read_values_from_json(self.level)
-        self.macgyver = Hero(Position(
-            self.HEROS["macgyver"]["position_row"],
-            self.HEROS["macgyver"]["position_col"]), pygame.image.load(
-            self.HEROS["macgyver"]["avatar"]).convert_alpha())
-        self.guardian = Human(Position(
-            self.VILLAINS["guardian"]["position_row"],
-            self.VILLAINS["guardian"]["position_col"]), pygame.image.load(
-            self.VILLAINS["guardian"]["avatar"]).convert_alpha())
-        self.needle = Item(self.randomize_position(), pygame.image.load(
-            'macgyver/assets/needle.png').convert_alpha())
-        self.ITEMS.append(self.needle)
-        self.tube = Item(self.randomize_position(), pygame.image.load(
-            'macgyver/assets/tube.png').convert_alpha())
-        self.ITEMS.append(self.tube)
-        self.ether = Item(self.randomize_position(), pygame.image.load(
-            'macgyver/assets/potion.png').convert_alpha())
-        self.ITEMS.append(self.ether)
+
+        if level > 0:
+            self.macgyver = Hero(Position(
+                self.HEROS["macgyver"]["position_row"],
+                self.HEROS["macgyver"]["position_col"]), pygame.image.load(
+                self.HEROS["macgyver"]["avatar"]).convert_alpha(),
+                pygame.image.load(self.HEROS["macgyver"]["walk_right"][1]).convert_alpha(),
+                pygame.image.load(self.HEROS["macgyver"]["walk_left"][
+                                      1]).convert_alpha(),
+                pygame.image.load(self.HEROS["macgyver"]["walk_up"][
+                                      1]).convert_alpha(),
+                pygame.image.load(self.HEROS["macgyver"]["walk_down"][
+                                      1]).convert_alpha())
+            self.guardian = Human(Position(
+                self.VILLAINS["guardian"]["position_row"],
+                self.VILLAINS["guardian"]["position_col"]), pygame.image.load(
+                self.VILLAINS["guardian"]["avatar"]).convert_alpha())
+            self.needle = Item(self.randomize_position(), pygame.image.load(
+                'macgyver/assets/needle.png').convert_alpha())
+            self.ITEMS.append(self.needle)
+            self.tube = Item(self.randomize_position(), pygame.image.load(
+                'macgyver/assets/tube.png').convert_alpha())
+            self.ITEMS.append(self.tube)
+            self.ether = Item(self.randomize_position(), pygame.image.load(
+                'macgyver/assets/potion.png').convert_alpha())
+            self.ITEMS.append(self.ether)
 
     def display_maze(self):
         """ Show the board to the player """
@@ -81,22 +90,23 @@ class Maze:
             pos_row += 1
 
         # loop over collectible items
-        for item in self.ITEMS:
-            if item.is_displayed:
-                self.window.blit(item.image, (item.position_col *
-                                 self.SPRITE_SIZE, item.position_row *
-                                 self.SPRITE_SIZE))
-
-        # display humans
-        self.window.blit(self.macgyver.image, (self.macgyver.position_col *
-                                               self.SPRITE_SIZE,
-                                               self.macgyver.position_row *
-                                               self.SPRITE_SIZE))
-
-        self.window.blit(self.guardian.image, (self.guardian.position_col *
-                                               self.SPRITE_SIZE,
-                                               self.guardian.position_row *
-                                               self.SPRITE_SIZE))
+        if len(self.ITEMS) > 0:
+            for item in self.ITEMS:
+                if item.is_displayed:
+                    self.window.blit(item.image, (item.position_col *
+                                     self.SPRITE_SIZE, item.position_row *
+                                     self.SPRITE_SIZE))
+        if len(self.HEROS) > 0:
+            # display humans
+            self.window.blit(self.macgyver.image, (self.macgyver.position_col *
+                                                   self.SPRITE_SIZE,
+                                                   self.macgyver.position_row *
+                                                   self.SPRITE_SIZE))
+        if len(self.VILLAINS) > 0:
+            self.window.blit(self.guardian.image, (self.guardian.position_col *
+                                                   self.SPRITE_SIZE,
+                                                   self.guardian.position_row *
+                                                   self.SPRITE_SIZE))
 
         pygame.display.update()
 
@@ -115,9 +125,12 @@ class Maze:
                 # load the data contained in this file
                 playing_level = json.load(level)[level_nb]
                 self.BOARD = playing_level["background"]
-                self.SAFE_EXIT = playing_level["exit"]
-                self.HEROS = playing_level["heros"]
-                self.VILLAINS = playing_level["villains"]
+                try:
+                    self.SAFE_EXIT = playing_level["exit"]
+                    self.HEROS = playing_level["heros"]
+                    self.VILLAINS = playing_level["villains"]
+                except KeyError:
+                    pass
 
     def randomize_position(self):
         """ Set a random position for Items MacGyver needs to find """
@@ -226,24 +239,19 @@ class Human:
 class Hero(Human):
     """ Hero collects items and moves on the board """
 
-    def __init__(self, position, image):
+    def __init__(self, position, image, right, left, up, down):
         super().__init__(position, image)
         self.items = 0
         self.moves = 0
-        self.walk_right = self.walk_right()
+        self.walk_right = right
+        self.walk_left = left
+        self.walk_up = up
+        self.walk_down = down
 
     def print_position(self):
         print(pygame.key.get_pressed())
         # print("You are now in position:", self.position_row, "(row),",
         #       self.position_col, "(column).")
-
-    @property
-    def walk_right(self):
-        sprites = []
-        # for sprite in Maze.HEROS['macgyver']['walk_right']:
-        print(Maze.HEROS)
-            # sprites.append(pygame.image.load(sprite).convert_alpha())
-        # return sprites
 
     def travels(self, direction):
         """ Call a function depending on player direction choice """
@@ -259,26 +267,30 @@ class Hero(Human):
         return func()
 
     def up(self):
-        print("You plan to go up at row", self.position_row - 1,
-              "and column", self.position_col)
+        self.image = self.walk_up
+        # print("You plan to go up at row", self.position_row - 1,
+        #       "and column", self.position_col)
         planned_direction = Position(self.position_row - 1, self.position_col)
         return planned_direction
 
     def down(self):
-        print("You plan to go down at row", self.position_row + 1,
-              "and column", self.position_col)
+        self.image = self.walk_down
+        # print("You plan to go down at row", self.position_row + 1,
+        #       "and column", self.position_col)
         planned_direction = Position(self.position_row + 1, self.position_col)
         return planned_direction
 
     def left(self):
-        print("You plan to go left at row", self.position_row, "and column",
-              self.position_col - 1)
+        self.image = self.walk_left
+        # print("You plan to go left at row", self.position_row, "and column",
+        #       self.position_col - 1)
         planned_direction = Position(self.position_row, self.position_col - 1)
         return planned_direction
 
     def right(self):
-        print("You plan to go right at row", self.position_row, "and column",
-              self.position_col + 1)
+        self.image = self.walk_right
+        # print("You plan to go right at row", self.position_row, "and column",
+        #       self.position_col + 1)
         planned_direction = Position(self.position_row, self.position_col + 1)
         return planned_direction
 
