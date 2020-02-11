@@ -6,7 +6,7 @@ import pygame
 import sys
 
 
-FPS = 9
+FPS = 30
 
 pygame.init()
 # pygame.mixer.init()

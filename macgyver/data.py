@@ -82,8 +82,10 @@ class Maze:
 
         # loop over collectible items
         for item in self.ITEMS:
-            self.window.blit(item.image, (item.position_col * self.SPRITE_SIZE,
-                                          item.position_row * self.SPRITE_SIZE))
+            if item.is_displayed:
+                self.window.blit(item.image, (item.position_col *
+                                 self.SPRITE_SIZE, item.position_row *
+                                 self.SPRITE_SIZE))
 
         # display humans
         self.window.blit(self.macgyver.image, (self.macgyver.position_col *
@@ -228,25 +230,30 @@ class Hero(Human):
         super().__init__(position, image)
         self.items = 0
         self.moves = 0
+        self.walk_right = self.walk_right()
 
     def print_position(self):
         print(pygame.key.get_pressed())
         # print("You are now in position:", self.position_row, "(row),",
         #       self.position_col, "(column).")
 
+    @property
+    def walk_right(self):
+        sprites = []
+        # for sprite in Maze.HEROS['macgyver']['walk_right']:
+        print(Maze.HEROS)
+            # sprites.append(pygame.image.load(sprite).convert_alpha())
+        # return sprites
+
     def travels(self, direction):
         """ Call a function depending on player direction choice """
         switcher = {
-            # "l": self.left,
-            # "r": self.right,
-            # "u": self.up,
-            # "d": self.down,
-            # "exit": self.exit
             pygame.K_LEFT: self.left,
             pygame.K_RIGHT: self.right,
             pygame.K_UP: self.up,
             pygame.K_DOWN: self.down,
-            pygame.K_q: self.exit
+            pygame.K_q: self.exit,
+            pygame.K_ESCAPE: self.exit
         }
         func = switcher.get(direction, self.other)
         return func()

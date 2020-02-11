@@ -21,6 +21,10 @@
       "macgyver": {
         "position_row": 12,
         "position_col": 0,
+        "walk_left": ["macgyver/assets/hero_left1.png", "macgyver/assets/hero_left2.png", "macgyver/assets/hero_left3.png"],
+        "walk_right": ["macgyver/assets/hero_right1.png", "macgyver/assets/hero_right2.png", "macgyver/assets/hero_right3.png"],
+        "walk_up": ["macgyver/assets/hero_up1.png", "macgyver/assets/hero_up2.png", "macgyver/assets/hero_up3.png"],
+        "walk_down": ["macgyver/assets/hero_down1.png", "macgyver/assets/hero_down2.png", "macgyver/assets/hero_down3.png"],
         "avatar": "macgyver/assets/hero_down2.png"
       }
     },
