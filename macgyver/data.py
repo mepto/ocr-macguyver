@@ -96,18 +96,21 @@ class Maze:
                     self.window.blit(item.image, (item.position_col *
                                      self.SPRITE_SIZE, item.position_row *
                                      self.SPRITE_SIZE))
+        # display humans
         if len(self.HEROS) > 0:
-            # display humans
-            self.window.blit(self.macgyver.image, (self.macgyver.position_col *
-                                                   self.SPRITE_SIZE,
-                                                   self.macgyver.position_row *
-                                                   self.SPRITE_SIZE))
-        if len(self.VILLAINS) > 0:
-            self.window.blit(self.guardian.image, (self.guardian.position_col *
-                                                   self.SPRITE_SIZE,
-                                                   self.guardian.position_row *
-                                                   self.SPRITE_SIZE))
+            self.window.blit(self.macgyver.image, (
+                self.macgyver.position_col * self.SPRITE_SIZE,
+                self.macgyver.position_row * self.SPRITE_SIZE))
 
+        if len(self.VILLAINS) > 0:
+            if self.guardian.is_alive_and_kicking:
+                self.window.blit(self.guardian.image, (
+                    self.guardian.position_col * self.SPRITE_SIZE,
+                    self.guardian.position_row * self.SPRITE_SIZE))
+            else:
+                self.window.blit(self.guardian.image, (
+                    self.guardian.position_col * self.SPRITE_SIZE,
+                    self.guardian.position_row * self.SPRITE_SIZE + 12))
         pygame.display.update()
 
     def write_on_screen(self, message, size, location):
@@ -201,8 +204,10 @@ class Maze:
                 self.macgyver.position_col = new_position.col
                 if self.macgyver.items < 3:
                     self.macgyver.is_alive_and_kicking = False
+                    self.macgyver.is_dead()
                 else:
                     self.guardian.is_alive_and_kicking = False
+                    self.guardian.is_dead()
                     print("This guy felt like a nap.")
                     self.macgyver.moves += 1
             else:
@@ -252,6 +257,10 @@ class Human:
         self.position_col = position.col
         self.image = image
 
+    def is_dead(self):
+        if not self.is_alive_and_kicking:
+            self.image = pygame.transform.rotate(self.image, 90)
+
 
 class Hero(Human):
     """ Hero collects items and moves on the board """
@@ -264,11 +273,15 @@ class Hero(Human):
         self.walk_left = left
         self.walk_up = up
         self.walk_down = down
+        self.death = pygame.image.load(
+            'macgyver/assets/dead.png').convert_alpha()
 
+    def is_dead(self):
+        self.image = self.death
+
+    @staticmethod
     def print_position(self):
         print(pygame.key.get_pressed())
-        # print("You are now in position:", self.position_row, "(row),",
-        #       self.position_col, "(column).")
 
     def travels(self, direction):
         """ Call a function depending on player direction choice """
@@ -285,29 +298,21 @@ class Hero(Human):
 
     def up(self):
         self.image = self.walk_up
-        # print("You plan to go up at row", self.position_row - 1,
-        #       "and column", self.position_col)
         planned_direction = Position(self.position_row - 1, self.position_col)
         return planned_direction
 
     def down(self):
         self.image = self.walk_down
-        # print("You plan to go down at row", self.position_row + 1,
-        #       "and column", self.position_col)
         planned_direction = Position(self.position_row + 1, self.position_col)
         return planned_direction
 
     def left(self):
         self.image = self.walk_left
-        # print("You plan to go left at row", self.position_row, "and column",
-        #       self.position_col - 1)
         planned_direction = Position(self.position_row, self.position_col - 1)
         return planned_direction
 
     def right(self):
         self.image = self.walk_right
-        # print("You plan to go right at row", self.position_row, "and column",
-        #       self.position_col + 1)
         planned_direction = Position(self.position_row, self.position_col + 1)
         return planned_direction
 
@@ -323,22 +328,11 @@ class Hero(Human):
 
 class Item:
     """ Create item with position and display status """
-    def __init__(self, position,
-                 image="https://freeiconshop.com/wp-content/uploads/edd/gift-flat.png"):
+    def __init__(self, position, image=None):
         self.position_row = position.row
         self.position_col = position.col
         self.image = image
         self.is_displayed = True
-        # self.display_item()
-
-    # def display_item(self):
-    #     if self.is_displayed:
-    #         location_rect = self.image.get_rect(topleft=(self.position_row *
-    #                                                      Maze.SPRITE_SIZE,
-    #                                                      self.position_col *
-    #                                                      Maze.SPRITE_SIZE))
-    #         Maze.window.blit(self.image, location_rect)
-    #         print(self.position_row, self.position_col)
 
 
 class Position:

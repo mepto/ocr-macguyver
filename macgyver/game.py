@@ -43,6 +43,7 @@ def main():
             else:
                 if "level" + str(current_level) != player_board.level:
                     player_board = make_maze(current_level)
+                    player_board.display_maze()
                 hero = player_board.macgyver
                 if player_board.ready_to_play():
                     if event.type == pygame.KEYDOWN:
