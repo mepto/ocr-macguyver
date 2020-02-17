@@ -46,7 +46,8 @@ class Maze:
                 self.HEROS["macgyver"]["position_row"],
                 self.HEROS["macgyver"]["position_col"]), pygame.image.load(
                 self.HEROS["macgyver"]["avatar"]).convert_alpha(),
-                pygame.image.load(self.HEROS["macgyver"]["walk_right"][1]).convert_alpha(),
+                pygame.image.load(self.HEROS["macgyver"]["walk_right"][
+                                      1]).convert_alpha(),
                 pygame.image.load(self.HEROS["macgyver"]["walk_left"][
                                       1]).convert_alpha(),
                 pygame.image.load(self.HEROS["macgyver"]["walk_up"][
@@ -71,7 +72,6 @@ class Maze:
         """ Show the board to the player """
         # blank canvas first
         self.window.fill(pygame.Color(0, 0, 0))
-
         # loop over background maze data
         pos_row = 0
         for row in self.BOARD:
@@ -109,6 +109,22 @@ class Maze:
                                                    self.SPRITE_SIZE))
 
         pygame.display.update()
+
+    def write_on_screen(self, message, size, location):
+        """ Display text on start and end screen """
+        pygame.font.init()
+        font = pygame.font.Font("macgyver/assets/zcool.ttf", size)
+        text = font.render(message, True, (235, 207, 52))
+        if location == "top":
+            distance_from_top = 40
+        elif location == "bottom":
+            distance_from_top = 660
+        elif location == "center":
+            distance_from_top = self.SCREEN_HEIGHT / 2
+
+        self.window.blit(text, (360 - text.get_width() // 2,
+                                distance_from_top - text.get_height() // 2))
+        pygame.display.flip()
 
     def read_values_from_json(self, level_nb):
         """ Retrieve Maze data from json file"""
@@ -207,11 +223,12 @@ class Maze:
     def ending(self):
         """ Show the end depending on hero status """
         if self.macgyver.is_alive_and_kicking:
-            print(self.macgyver.victory_phrase)
-            print("Congrats! You were out in", self.macgyver.moves, "moves :)")
+            victory = str(f"Congrats! You were out in {self.macgyver.moves} "
+                          f"moves :)")
+            self.write_on_screen(victory, 50, "top")
         else:
             print(self.macgyver.failure_phrase)
-            print("Ooops. You died.")
+            self.write_on_screen("Ooops. You died.", 40, "top")
         self.reset_lists()
 
     def reset_lists(self):
