@@ -17,13 +17,28 @@ clock = pygame.time.Clock()
 # Game!
 def main():
     """ User interaction main loop """
-    playing = True
     current_level = 0
 
     def make_maze(new_level):
         return data.Maze(new_level)
 
     player_board = make_maze(current_level)
+
+    playing = True
+
+    def finish():
+        # global current_level
+        # global player_board
+        # if status == "win":
+
+        # pygame.time.wait(FPS * 3)
+        global current_level
+        global player_board
+        current_level = 0
+        player_board = make_maze(current_level)
+        # .display_maze()
+        main()
+        # elif status == "lose":
 
     while playing:
 
@@ -51,18 +66,24 @@ def main():
                         player_board.manage_collision(new_position)
                         player_board.display_maze()
                 else:
-                    playing = False
+                    # playing = False
                     player_board.ending()
-                    user_says = input("Would you like to try again? (y/n)")
-                    if user_says.lower() == 'y':
-                        main()
-                    else:
-                        print("ok, no play for you then. Bye-bye now!")
-                        exit()
+                    finish()
+                    # exit()
+                    # user_says = input("Would you like to try again? (y/n)")
+                    # if user_says.lower() == 'y':
+                    # player_board.display_maze()
+
+                    # else:
+                    #     print("ok, no play for you then. Bye-bye now!")
+                    #     exit()
 
         clock.tick(FPS)
     pygame.quit()
     quit()
+
+
+
 
 
 if __name__ == '__main__':

@@ -232,7 +232,6 @@ class Maze:
                           f"moves :)")
             self.write_on_screen(victory, 50, "top")
         else:
-            print(self.macgyver.failure_phrase)
             self.write_on_screen("Ooops. You died.", 40, "top")
         self.reset_lists()
 
@@ -243,6 +242,8 @@ class Maze:
         self.HEROS.clear()
         self.VILLAINS.clear()
         self.SAFE_EXIT.clear()
+        del self.guardian
+        del self.macgyver
 
 
 class Human:
