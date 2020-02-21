@@ -6,5 +6,3 @@ from macgyver import game as program
 
 
 program.main()
-
-

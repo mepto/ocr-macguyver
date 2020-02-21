@@ -36,7 +36,6 @@
       ["w","f","f","f","w","f","f","f","w","f","f","f","w","f","w"],
       ["w","w","w","w","w","w","w","w","w","w","w","w","w","w","w"]
     ],
-
     "heros": {
       "macgyver": {
         "position_row": 12,
@@ -60,7 +59,6 @@
         "position_row": 5,
         "position_col": 14
       }
-   }
-  },
-  "level2": ["hello hello"]
+    }
+  }
 }

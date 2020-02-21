@@ -12,7 +12,7 @@ import json
 import os
 from random import randint
 import pygame
-
+pygame.font.init()
 
 class Maze:
     SCREEN_WIDTH = 720
@@ -115,19 +115,17 @@ class Maze:
 
     def write_on_screen(self, message, size, location):
         """ Display text on start and end screen """
-        pygame.font.init()
         font = pygame.font.Font("macgyver/assets/zcool.ttf", size)
-        text = font.render(message, True, (235, 207, 52))
         if location == "top":
             distance_from_top = 40
         elif location == "bottom":
-            distance_from_top = 660
+            distance_from_top = 670
         elif location == "center":
             distance_from_top = self.SCREEN_HEIGHT / 2
-
+        text = font.render(message, True, (235, 207, 52))
         self.window.blit(text, (360 - text.get_width() // 2,
                                 distance_from_top - text.get_height() // 2))
-        pygame.display.flip()
+        pygame.display.update()
 
     def read_values_from_json(self, level_nb):
         """ Retrieve Maze data from json file"""
@@ -233,6 +231,7 @@ class Maze:
             self.write_on_screen(victory, 50, "top")
         else:
             self.write_on_screen("Ooops. You died.", 40, "top")
+        self.write_on_screen("Press ENTER to go to main menu", 40, "center")
         self.reset_lists()
 
     def reset_lists(self):
@@ -281,7 +280,7 @@ class Hero(Human):
         self.image = self.death
 
     @staticmethod
-    def print_position(self):
+    def print_position():
         print(pygame.key.get_pressed())
 
     def travels(self, direction):
