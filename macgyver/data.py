@@ -47,13 +47,13 @@ class Maze:
                 self.HEROS["macgyver"]["position_col"]), pygame.image.load(
                 self.HEROS["macgyver"]["avatar"]).convert_alpha(),
                 pygame.image.load(self.HEROS["macgyver"]["walk_right"][
-                                      1]).convert_alpha(),
+                                      0]).convert_alpha(),
                 pygame.image.load(self.HEROS["macgyver"]["walk_left"][
-                                      1]).convert_alpha(),
+                                      0]).convert_alpha(),
                 pygame.image.load(self.HEROS["macgyver"]["walk_up"][
-                                      1]).convert_alpha(),
+                                      0]).convert_alpha(),
                 pygame.image.load(self.HEROS["macgyver"]["walk_down"][
-                                      1]).convert_alpha())
+                                      0]).convert_alpha())
             self.guardian = Human(Position(
                 self.VILLAINS["guardian"]["position_row"],
                 self.VILLAINS["guardian"]["position_col"]), pygame.image.load(
