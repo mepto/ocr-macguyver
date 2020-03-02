@@ -17,6 +17,9 @@ pygame.font.init()
 
 
 class Maze:
+    """ Main class displays the playing board, humans, items,
+        manages collisions, writes on board, manages ending
+    """
     SCREEN_WIDTH = 720
     SCREEN_HEIGHT = 720
     SPRITE_SIZE = 48
@@ -73,7 +76,7 @@ class Maze:
     def display_maze(self):
         """ Show the board to the player """
         # blank canvas
-        self.window.fill(pygame.Color(0, 0, 0))
+        self.window.fill(pygame.Color('#000000'))
         # loop over background maze data
         pos_row = 0
         for row in self.BOARD:
@@ -249,6 +252,7 @@ class Human:
         self.image = image
 
     def is_dead(self):
+        """ Human is lying on the floor: image is rotated """
         if not self.is_alive_and_kicking:
             self.image = pygame.transform.rotate(self.image, 90)
 
@@ -267,6 +271,7 @@ class Hero(Human):
             'macgyver/assets/img/dead.png').convert_alpha()
 
     def is_dead(self):
+        """ Hero death is represented by a tombstone """
         self.image = self.death
 
     def travels(self, direction):
@@ -283,27 +288,32 @@ class Hero(Human):
         return func()
 
     def up(self):
+        """ Hero -- direction & image: up """
         self.image = self.walk_up
         planned_direction = Position(self.position_row - 1, self.position_col)
         return planned_direction
 
     def down(self):
+        """ Hero -- direction & image: down """
         self.image = self.walk_down
         planned_direction = Position(self.position_row + 1, self.position_col)
         return planned_direction
 
     def left(self):
+        """ Hero -- direction & image: left """
         self.image = self.walk_left
         planned_direction = Position(self.position_row, self.position_col - 1)
         return planned_direction
 
     def right(self):
+        """ Hero -- direction & image: right """
         self.image = self.walk_right
         planned_direction = Position(self.position_row, self.position_col + 1)
         return planned_direction
 
     @staticmethod
     def exit():
+        """ Player no longer wants to play """
         exit()
 
 
