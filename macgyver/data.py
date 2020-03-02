@@ -21,7 +21,7 @@ class Maze:
         manages collisions, writes on board, manages ending
     """
     SCREEN_WIDTH = 720
-    SCREEN_HEIGHT = 720
+    SCREEN_HEIGHT = 768
     SPRITE_SIZE = 48
     WIDTH = 15
     HEIGHT = 15
@@ -76,7 +76,7 @@ class Maze:
     def display_maze(self):
         """ Show the board to the player """
         # blank canvas
-        self.window.fill(pygame.Color('#000000'))
+        self.window.fill(pygame.Color('#6b3737'))
         # loop over background maze data
         pos_row = 0
         for row in self.BOARD:
@@ -219,6 +219,7 @@ class Maze:
                         if item.position_row == self.macgyver.position_row and \
                                 item.position_col == self.macgyver.position_col:
                             item.is_displayed = False
+                            self.macgyver.pockets(item)
 
     def ending(self):
         """ Show the end depending on hero status """
@@ -262,6 +263,7 @@ class Hero(Human):
     def __init__(self, position, image, right, left, up, down):
         super().__init__(position, image)
         self.items = 0
+        self.inventory = []
         self.moves = 0
         self.walk_right = right
         self.walk_left = left
@@ -270,9 +272,9 @@ class Hero(Human):
         self.death = pygame.image.load(
             'macgyver/assets/img/dead.png').convert_alpha()
 
-    def is_dead(self):
-        """ Hero death is represented by a tombstone """
-        self.image = self.death
+    def pockets(self, item):
+        """ Adds a collected item to the inventory """
+        self.inventory.append(item)
 
     def travels(self, direction):
         """ Call a function depending on player direction choice """
@@ -315,6 +317,10 @@ class Hero(Human):
     def exit():
         """ Player no longer wants to play """
         exit()
+
+    def is_dead(self):
+        """ Hero death is represented by a tombstone """
+        self.image = self.death
 
 
 class Item:
