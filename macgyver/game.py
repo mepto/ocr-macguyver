@@ -1,16 +1,19 @@
 #! /usr/bin/python
 # coding: utf-8
 
+"""
+:synopsis: Game loop for macgyver game.
+
+"""
+
 import os
 from macgyver import data as data
 import pygame
-import sys
 
 FPS = 15
 
 os.environ['SDL_VIDEO_CENTERED'] = '1'
 pygame.init()
-# pygame.mixer.init()
 
 clock = pygame.time.Clock()
 
@@ -26,18 +29,19 @@ def main():
     playing = True
 
     def start():
+        """ Initialise level 0 """
         global current_level
         global player_board
         current_level = 0
         player_board = make_maze(current_level)
 
     def make_maze(new_level):
+        """ Initialise non-0 level """
         return data.Maze(new_level)
 
     start()
 
     while playing:
-
         for event in pygame.event.get():
             if event.type != pygame.MOUSEMOTION:
                 # check for window closing
@@ -45,6 +49,7 @@ def main():
                     playing = False
                     pygame.quit()
                     quit()
+                # manage start level
                 if current_level < 1:
                     player_board.display_maze()
                     player_board.write_on_screen("READY PLAYER 1?", 50, "top")
@@ -53,20 +58,22 @@ def main():
                     if event.type == pygame.KEYDOWN and event.key == \
                             pygame.K_SPACE:
                         current_level += 1
+                # actual playing by user
                 else:
                     if "level" + str(current_level) != player_board.level:
                         player_board = make_maze(current_level)
                         player_board.display_maze()
                     hero = player_board.macgyver
                     if player_board.ready_to_play():
+                        # key listener
                         if event.type == pygame.KEYDOWN:
                             new_position = hero.travels(event.key)
                             player_board.manage_collision(new_position)
                             player_board.display_maze()
+                    # game end
                     else:
                         player_board.ending()
                         start()
-
         clock.tick(FPS)
     pygame.quit()
     quit()
