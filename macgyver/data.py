@@ -195,7 +195,7 @@ class Maze:
         if new_position is not None:
             collision_type = self.is_colliding(new_position)
             if collision_type == 'wall':
-                print("Sorry, you can't go there.")
+                pass
             elif collision_type == 'villain':
                 self.macgyver.position_row = new_position.row
                 self.macgyver.position_col = new_position.col
@@ -268,10 +268,6 @@ class Hero(Human):
 
     def is_dead(self):
         self.image = self.death
-
-    @staticmethod
-    def print_position():
-        print(pygame.key.get_pressed())
 
     def travels(self, direction):
         """ Call a function depending on player direction choice """
