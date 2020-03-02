@@ -1,12 +1,14 @@
 #! /usr/bin/python
 # coding: utf-8
 
+import os
 from macgyver import data as data
 import pygame
 import sys
 
 FPS = 15
 
+os.environ['SDL_VIDEO_CENTERED'] = '1'
 pygame.init()
 # pygame.mixer.init()
 
