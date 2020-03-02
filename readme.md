@@ -1,106 +1,27 @@
 # Jeu: MacGuyver's escape
 
-## Specifications
+## How to install
+1. Clone the github repository on your computer
+``https://github.com/mepto/ocr-macguyver.git``
 
-- Il n'y a qu'un seul niveau. La structure (départ, emplacement des murs, arrivée), devra être enregistrée dans un fichier pour la modifier facilement au besoin.
-- MacGyver sera contrôlé par les touches directionnelles du clavier.
-- Les objets seront répartis aléatoirement dans le labyrinthe et changeront d’emplacement si l'utilisateur ferme le jeu et le relance.
-- La fenêtre du jeu sera un carré pouvant afficher 15 sprites sur la longueur.
-- MacGyver devra donc se déplacer de case en case, avec 15 cases sur la longueur de la fenêtre !
-- Il récupèrera un objet simplement en se déplaçant dessus.
-- Le programme s'arrête uniquement si MacGyver a bien récupéré tous les objets et trouvé la sortie du labyrinthe. S'il n'a pas tous les objets et qu'il se présente devant le garde, il meurt (la vie est cruelle pour les héros).
-- Le programme sera standalone, c'est-à-dire qu'il pourra être exécuté sur n'importe quel ordinateur.
+2. Use your favorite virtual environment: base it on Python 3.7.6.
 
-## Libs and tools
-os
-random
-pygame
+3. Install requirement from the project folder
+``$ pip install -r requirements.txt``
+This game uses the Pygame game engine which will be installed from the
+ requirement file.
 
+4. Launch the game from your terminal
+``python macgyver.py``
 
-## Elements
+## The Game
+### The story
+MacGyver is in a labyrinth-like location, and the exit is guarded by a villain.
+Collect the needle, ether and tube to make the syringe that will put the
+ guard to sleep. If you fail to gather all the items, you will run to your
+  death!
 
-### class Board
-
-        width
-        height
-        add_background(filepath)
-        add_humans()
-        add_items()
-        add_scoreboard()
-
-
-### class Human
-
-        position_xy(error_if_none)
-        image(error_if_none)
-        is_alive=True
-        victory_phrase="Yay"
-        failure_phrase="Argh..."
-
-
-### class Hero(Human)
-
-        position_x
-        position_y
-        *is_alive
-        image
-        items=0
-        create_
-
-
-### class Villain(Human)
-
-        position_x
-        position_y
-        is_evil=True
-        is_static=True
-        *is_alive
-        image
-
-
-### class Item
-
-        position_x=randomize_position()
-        position_y=randomize_position()
-        image
-        is_acquired=False
-
-
-#### def randomize_position()
-        set random position
-        check_collision()
-
-#### def check_collision()
-        humans can't walk through walls
-        only hero can grab items
-        hero dies if collides with villains
-        items can't be in walls
-        Items can't appear on human positions
-
-#### def add_background(filepath)
-        check_file_exists
-        read_file
-        implement_instructions
-
-#### def add_humans()
-        new Hero(posx, posy)
-        new Villain(posx, posy)
-
-#### def add_items()
-        new Item(seringe)
-        new Item(tube)
-        new Item(needle)
-        
-#### def add_score_board()
-        hero.items
-        moves
-
-#### def move_human(who, key_pressed)
-        if arrow_up or arrow_down:
-            check_collistion()
-            who.position_y += xx
-            moves += 1
-        elsif arrow_left or arrow_right:
-            check_collistion()
-            who.position_x += xx
-            moves += 1
+### how to play
+- Use space to start playing
+- Use arrows to move MacGyver
+- Fed up? Press Escape or close the game window.
