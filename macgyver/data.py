@@ -147,7 +147,7 @@ class Maze:
                     self.HEROS = playing_level["heros"]
                     self.VILLAINS = playing_level["villains"]
                 except KeyError:
-                    print("Non playable level")
+                    pass
 
     def randomize_position(self):
         """ Set a random position for Items MacGyver needs to find """
