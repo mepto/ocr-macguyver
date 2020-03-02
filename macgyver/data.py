@@ -32,11 +32,11 @@ class Maze:
         self.window = pygame.display.set_mode((self.SCREEN_WIDTH,
                                                self.SCREEN_HEIGHT))
         self.wall = pygame.image.load(
-            'macgyver/assets/wall1.png').convert_alpha()
+            'macgyver/assets/img/wall1.png').convert_alpha()
         self.floor = pygame.image.load(
-            'macgyver/assets/floor1.png').convert_alpha()
+            'macgyver/assets/img/floor1.png').convert_alpha()
         self.door = pygame.image.load(
-            'macgyver/assets/door.png').convert_alpha()
+            'macgyver/assets/img/door.png').convert_alpha()
         self.title = pygame.display.set_caption("Save MacGyver!!!")
         self.level = "level" + str(level)
         self.read_values_from_json(self.level)
@@ -59,13 +59,13 @@ class Maze:
                 self.VILLAINS["guardian"]["position_col"]), pygame.image.load(
                 self.VILLAINS["guardian"]["avatar"]).convert_alpha())
             self.needle = Item(self.randomize_position(), pygame.image.load(
-                'macgyver/assets/needle.png').convert_alpha())
+                'macgyver/assets/img/needle.png').convert_alpha())
             self.ITEMS.append(self.needle)
             self.tube = Item(self.randomize_position(), pygame.image.load(
-                'macgyver/assets/tube.png').convert_alpha())
+                'macgyver/assets/img/tube.png').convert_alpha())
             self.ITEMS.append(self.tube)
             self.ether = Item(self.randomize_position(), pygame.image.load(
-                'macgyver/assets/potion.png').convert_alpha())
+                'macgyver/assets/img/potion.png').convert_alpha())
             self.ITEMS.append(self.ether)
 
     def display_maze(self):
@@ -147,7 +147,7 @@ class Maze:
                     self.HEROS = playing_level["heros"]
                     self.VILLAINS = playing_level["villains"]
                 except KeyError:
-                    pass
+                    print("Impossible to proceed - missing level data.")
 
     def randomize_position(self):
         """ Set a random position for Items MacGyver needs to find """
@@ -274,7 +274,7 @@ class Hero(Human):
         self.walk_up = up
         self.walk_down = down
         self.death = pygame.image.load(
-            'macgyver/assets/dead.png').convert_alpha()
+            'macgyver/assets/img/dead.png').convert_alpha()
 
     def is_dead(self):
         self.image = self.death
