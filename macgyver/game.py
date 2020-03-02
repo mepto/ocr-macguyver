@@ -17,38 +17,33 @@ pygame.init()
 
 clock = pygame.time.Clock()
 
-current_level = 0
-player_board = None
+
+def make_maze(new_level):
+    """ Initialise level """
+    return data.Maze(new_level)
 
 
 # Game!
 def main():
     """ User interaction main loop """
-    global current_level
-    global player_board
+    current_level = 0
+    player_board = make_maze(current_level)
     playing = True
-
-    def start():
-        """ Initialise level 0 """
-        global current_level
-        global player_board
-        current_level = 0
-        player_board = make_maze(current_level)
-
-    def make_maze(new_level):
-        """ Initialise non-0 level """
-        return data.Maze(new_level)
-
-    start()
 
     while playing:
         for event in pygame.event.get():
             if event.type != pygame.MOUSEMOTION:
                 # check for window closing
-                if event.type == pygame.QUIT:
+                if event.type == pygame.QUIT or (
+                        event.type == pygame.KEYDOWN
+                        and event.key == pygame.K_ESCAPE):
                     playing = False
                     pygame.quit()
                     quit()
+                # check for level update
+                if "level" + str(current_level) != player_board.level:
+                    player_board = make_maze(current_level)
+                    player_board.display_maze()
                 # manage start level
                 if current_level < 1:
                     player_board.display_maze()
@@ -60,9 +55,6 @@ def main():
                         current_level += 1
                 # actual playing by user
                 else:
-                    if "level" + str(current_level) != player_board.level:
-                        player_board = make_maze(current_level)
-                        player_board.display_maze()
                     hero = player_board.macgyver
                     if player_board.ready_to_play():
                         # key listener
@@ -73,7 +65,8 @@ def main():
                     # game end
                     else:
                         player_board.ending()
-                        start()
+                        current_level = 0
+                        make_maze(0)
         clock.tick(FPS)
     pygame.quit()
     quit()
