@@ -12,7 +12,9 @@ import json
 import os
 from random import randint
 import pygame
+
 pygame.font.init()
+
 
 class Maze:
     SCREEN_WIDTH = 720
@@ -40,7 +42,7 @@ class Maze:
         self.title = pygame.display.set_caption("Save MacGyver!!!")
         self.level = "level" + str(level)
         self.read_values_from_json(self.level)
-
+        # adds items and humans if playable level
         if level > 0:
             self.macgyver = Hero(Position(
                 self.HEROS["macgyver"]["position_row"],
@@ -70,7 +72,7 @@ class Maze:
 
     def display_maze(self):
         """ Show the board to the player """
-        # blank canvas first
+        # blank canvas
         self.window.fill(pygame.Color(0, 0, 0))
         # loop over background maze data
         pos_row = 0
@@ -88,7 +90,6 @@ class Maze:
                                                  pos_row * self.SPRITE_SIZE))
                 pos_col += 1
             pos_row += 1
-
         # loop over collectible items
         if len(self.ITEMS) > 0:
             for item in self.ITEMS:
@@ -101,7 +102,6 @@ class Maze:
             self.window.blit(self.macgyver.image, (
                 self.macgyver.position_col * self.SPRITE_SIZE,
                 self.macgyver.position_row * self.SPRITE_SIZE))
-
         if len(self.VILLAINS) > 0:
             if self.guardian.is_alive_and_kicking:
                 self.window.blit(self.guardian.image, (
@@ -139,7 +139,7 @@ class Maze:
         else:
             # open json file with level elements
             with open(self.FILE_LEVELS) as level:
-                # load the data contained in this file
+                # and load the data contained in this file
                 playing_level = json.load(level)[level_nb]
                 self.BOARD = playing_level["background"]
                 try:
@@ -147,7 +147,7 @@ class Maze:
                     self.HEROS = playing_level["heros"]
                     self.VILLAINS = playing_level["villains"]
                 except KeyError:
-                    print("Impossible to proceed - missing level data.")
+                    print("Non playable level")
 
     def randomize_position(self):
         """ Set a random position for Items MacGyver needs to find """
@@ -194,7 +194,6 @@ class Maze:
         """ Changes parameters depending on collision type """
         if new_position is not None:
             collision_type = self.is_colliding(new_position)
-
             if collision_type == 'wall':
                 print("Sorry, you can't go there.")
             elif collision_type == 'villain':
@@ -206,7 +205,6 @@ class Maze:
                 else:
                     self.guardian.is_alive_and_kicking = False
                     self.guardian.is_dead()
-                    print("This guy felt like a nap.")
                     self.macgyver.moves += 1
             else:
                 self.macgyver.position_row = new_position.row
@@ -214,14 +212,10 @@ class Maze:
                 self.macgyver.moves += 1
                 if collision_type == 'item':
                     self.macgyver.items += 1
-                    print("You now have", self.macgyver.items, "item(s).")
                     for item in self.ITEMS:
                         if item.position_row == self.macgyver.position_row and \
                                 item.position_col == self.macgyver.position_col:
                             item.is_displayed = False
-                    if self.macgyver.items == 3:
-                        print("Mac, hurry, time is running out! Use the items"
-                              " you collected to get rid of the guard!")
 
     def ending(self):
         """ Show the end depending on hero status """
@@ -247,12 +241,9 @@ class Maze:
 
 class Human:
     """ Hero and villain are both humans with positions and status """
-
     def __init__(self, position,
                  image="https://avatars.dicebear.com/v2/male/joe.svg"):
         self.is_alive_and_kicking = True
-        self.victory_phrase = "Yay"
-        self.failure_phrase = "Argh..."
         self.position_row = position.row
         self.position_col = position.col
         self.image = image
@@ -264,7 +255,6 @@ class Human:
 
 class Hero(Human):
     """ Hero collects items and moves on the board """
-
     def __init__(self, position, image, right, left, up, down):
         super().__init__(position, image)
         self.items = 0
@@ -293,7 +283,7 @@ class Hero(Human):
             pygame.K_q: self.exit,
             pygame.K_ESCAPE: self.exit
         }
-        func = switcher.get(direction, self.other)
+        func = switcher.get(direction)
         return func()
 
     def up(self):
@@ -318,12 +308,7 @@ class Hero(Human):
 
     @staticmethod
     def exit():
-        print("Sorry to see you go.")
         exit()
-
-    @staticmethod
-    def other():
-        print("No known direction. Try again.")
 
 
 class Item:
