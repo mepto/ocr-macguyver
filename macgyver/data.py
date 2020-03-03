@@ -72,6 +72,8 @@ class Maze:
             self.ether = Item(self.randomize_position(), pygame.image.load(
                 'macgyver/assets/img/potion.png').convert_alpha())
             self.ITEMS.append(self.ether)
+            self.inventory_background = pygame.image.load(
+                'macgyver/assets/img/inventory-item-bg.png').convert_alpha()
 
     def display_maze(self):
         """ Show the board to the player """
@@ -95,16 +97,27 @@ class Maze:
             pos_row += 1
         # loop over collectible items
         if len(self.ITEMS) > 0:
+            self.write_on_screen('In your pockets:', 25, 'footer')
+            for i in range(len(self.ITEMS)):
+                self.window.blit(self.inventory_background,
+                                 ((4 + i) * self.SPRITE_SIZE,
+                                  15 * self.SPRITE_SIZE))
             for item in self.ITEMS:
                 if item.is_displayed:
                     self.window.blit(item.image, (item.position_col *
                                      self.SPRITE_SIZE, item.position_row *
                                      self.SPRITE_SIZE))
+            for i in range(len(self.macgyver.inventory)):
+                self.window.blit(pygame.transform.scale(
+                    self.macgyver.inventory[i].image, (40, 40)), (
+                    (4 + i) * self.SPRITE_SIZE + 4,
+                    15 * self.SPRITE_SIZE + 4))
         # display humans
         if len(self.HEROS) > 0:
             self.window.blit(self.macgyver.image, (
                 self.macgyver.position_col * self.SPRITE_SIZE,
                 self.macgyver.position_row * self.SPRITE_SIZE))
+
         if len(self.VILLAINS) > 0:
             if self.guardian.is_alive_and_kicking:
                 self.window.blit(self.guardian.image, (
@@ -119,14 +132,19 @@ class Maze:
     def write_on_screen(self, message, size, location):
         """ Display text on start and end screen """
         font = pygame.font.Font("macgyver/assets/zcool.ttf", size)
+        text = font.render(message, True, (235, 207, 52))
+        distance_from_left = 360 - text.get_width() // 2
         if location == "top":
             distance_from_top = 40
         elif location == "bottom":
             distance_from_top = 670
         elif location == "center":
             distance_from_top = self.SCREEN_HEIGHT / 2
-        text = font.render(message, True, (235, 207, 52))
-        self.window.blit(text, (360 - text.get_width() // 2,
+        elif location == "footer":
+            distance_from_left = 10
+            distance_from_top = 670 + 72
+
+        self.window.blit(text, (distance_from_left,
                                 distance_from_top - text.get_height() // 2))
         pygame.display.update()
 
@@ -286,7 +304,7 @@ class Hero(Human):
             pygame.K_q: self.exit,
             pygame.K_ESCAPE: self.exit
         }
-        func = switcher.get(direction)
+        func = switcher.get(direction, self.other)
         return func()
 
     def up(self):
@@ -312,6 +330,10 @@ class Hero(Human):
         self.image = self.walk_right
         planned_direction = Position(self.position_row, self.position_col + 1)
         return planned_direction
+
+    def other(self):
+        """ Hero -- direction & image: wrong key ignored """
+        pass
 
     @staticmethod
     def exit():
